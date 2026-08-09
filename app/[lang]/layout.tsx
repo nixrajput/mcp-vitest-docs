@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { RootProvider } from "fumadocs-ui/provider/next";
-import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
+import { Bricolage_Grotesque, JetBrains_Mono } from "next/font/google";
 import { i18n, localeNames } from "@/lib/i18n";
 import { SITE_DESCRIPTION, SITE_TAGLINE, SITE_URL } from "@/lib/shared";
 import "../global.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-});
-
+// Body text uses Tailwind's default system-font stack (no download, no
+// identity to earn); only the two fonts with a real visual job stay.
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-bricolage",
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +33,7 @@ export default async function Layout({ children, params }: LayoutProps<"/[lang]"
   return (
     <html
       lang={lang}
-      className={`${inter.className} ${bricolage.variable} ${jetbrainsMono.variable}`}
+      className={`${bricolage.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="flex min-h-screen flex-col">

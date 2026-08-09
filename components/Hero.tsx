@@ -15,7 +15,7 @@ export function Hero({ lang }: { lang: string }) {
       </div>
 
       <div className="w-full text-left">
-        <p className="mb-2 pl-1 font-mono text-xs text-(--muted)">server.test.ts</p>
+        <p className="mb-2 pl-1 font-mono text-xs text-(--muted)">test/completions.test.ts</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <ReporterPane era="old" sdkLabel="SDK v1" revision="2025-11-25" startDelay={500} />
           <ReporterPane era="now" sdkLabel="SDK v2" revision="2026-07-28" startDelay={650} />

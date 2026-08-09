@@ -58,3 +58,18 @@ for (const path of ["/og/docs/api/harness/image.png", "/llms.mdx/docs/api/harnes
   }
 }
 console.log("PASS: og-image and llms markdown routes serve unprefixed");
+
+// Non-localized routes must serve directly, never via a redirect. This is the
+// class of bug that has bitten five times: the i18n proxy rewrites a top-level
+// route into /en/..., which 404s, and the redirect step still reports 200.
+for (const path of ["/icon.svg", "/apple-icon", "/sitemap.xml", "/robots.txt", "/llms.txt"]) {
+  const r = await fetch(`${base}${path}`, { redirect: "manual" });
+  if (r.status !== 200) {
+    console.error(
+      `FAIL: ${path} returned ${r.status}, expected 200 with no redirect. ` +
+        "Add it to NON_LOCALIZED_ROUTES in proxy.ts.",
+    );
+    process.exit(1);
+  }
+}
+console.log("PASS: non-localized routes serve without a locale redirect");

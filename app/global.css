@@ -84,6 +84,15 @@ html > body[data-scroll-locked] {
   --color-fd-muted-foreground: var(--muted);
 }
 
+/* The aside's own bg-fd-card reads --surface at full strength, which read as
+   a second panel stitched onto the page. Softening it toward --ground (kept
+   as color-mix so it flips with --surface/--ground per theme, no .dark copy
+   needed) lets docs read as one surface while nav hover/active states above
+   still pop against it since those keep the untouched --surface value. */
+#nd-sidebar {
+  --color-fd-card: color-mix(in srgb, var(--surface) 35%, var(--ground) 65%);
+}
+
 /* Registering these as theme fonts (rather than a one-off utility class) means
    the existing font-mono usage in InstallCommand picks up JetBrains Mono for
    free, with no change to that component. */

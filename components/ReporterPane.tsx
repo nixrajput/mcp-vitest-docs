@@ -2,14 +2,20 @@
 
 import { useEffect, useState } from "react";
 
-// The literal claim the hero makes: this is the SAME suite, so both panes
-// share one checks array rather than each defining their own.
-const CHECKS = [
-  { label: "connects and lists tools", ms: 12 },
-  { label: "echo round-trips", ms: 4 },
-  { label: "answers an elicitation", ms: 7 },
-  { label: "collects progress notifications", ms: 9 },
-];
+// Real output from test/completions.test.ts: same three assertions on both
+// lanes, but v2's timings are genuinely larger than v1's - not symmetric.
+const CHECKS = {
+  old: [
+    { label: "completes a prompt argument by prefix", ms: 15 },
+    { label: "a non-matching prefix completes to nothing", ms: 2 },
+    { label: "completes a resource-template variable", ms: 1 },
+  ],
+  now: [
+    { label: "completes a prompt argument by prefix", ms: 55 },
+    { label: "a non-matching prefix completes to nothing", ms: 4 },
+    { label: "completes a resource-template variable", ms: 3 },
+  ],
+} as const;
 
 const ERA_COLOR = { old: "var(--era-old)", now: "var(--era-now)" } as const;
 
@@ -30,9 +36,11 @@ export function ReporterPane({
   startDelay: number;
   stepMs?: number;
 }) {
+  const checks = CHECKS[era];
+
   // SSR and first paint show every check already passed; the effect below is
   // what "arms" the run, matching Reveal's progressive-enhancement approach.
-  const [resolvedCount, setResolvedCount] = useState(CHECKS.length);
+  const [resolvedCount, setResolvedCount] = useState<number>(checks.length);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -44,7 +52,7 @@ export function ReporterPane({
     // -> staggered resolve -> green hold) can schedule its own next start.
     const runCycle = () => {
       setResolvedCount(0);
-      timers = CHECKS.map((_, i) =>
+      timers = checks.map((_, i) =>
         setTimeout(
           () => {
             if (!cancelled) setResolvedCount((n) => Math.max(n, i + 1));
@@ -57,7 +65,7 @@ export function ReporterPane({
           () => {
             if (!cancelled) runCycle();
           },
-          startDelay + CHECKS.length * stepMs + HOLD_MS,
+          startDelay + checks.length * stepMs + HOLD_MS,
         ),
       );
     };
@@ -67,9 +75,9 @@ export function ReporterPane({
       cancelled = true;
       timers.forEach(clearTimeout);
     };
-  }, [startDelay, stepMs]);
+  }, [startDelay, stepMs, checks]);
 
-  const allResolved = resolvedCount === CHECKS.length;
+  const allResolved = resolvedCount === checks.length;
 
   return (
     <div
@@ -84,7 +92,7 @@ export function ReporterPane({
         <span style={{ color: ERA_COLOR[era] }}>{revision}</span>
       </div>
       <ul className="flex flex-col gap-2 px-3 py-3 font-mono text-[13px] leading-5">
-        {CHECKS.map((check, i) => {
+        {checks.map((check, i) => {
           const resolved = i < resolvedCount;
           return (
             <li key={check.label} className="flex items-baseline justify-between gap-3">
@@ -114,7 +122,7 @@ export function ReporterPane({
           allResolved ? "text-(--pass) opacity-100" : "text-(--muted) opacity-0"
         }`}
       >
-        1 file {CHECKS.length} passed ({CHECKS.length})
+        {checks.length} passed ({checks.length})
       </div>
     </div>
   );
