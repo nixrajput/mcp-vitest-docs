@@ -1,0 +1,19 @@
+---
+title: mcpTest(serverOrFactory, options?)
+description: Connect a server and get back an McpHarness, the entry point every other API builds on.
+---
+
+Connects a server and resolves with an [`McpHarness`](/en/docs/api/harness). Accepts an `McpServer` instance, a factory (sync or async) that returns one, or a spec for a server you cannot import - `{ command, args? }` to spawn one over stdio, or `{ url, headers? }` to reach one over HTTP. See [testing an external server](/en/docs/api/external-servers).
+
+```ts
+import { mcpTest } from "mcp-vitest";
+
+const mcp = await mcpTest(() => createServer());
+```
+
+| Option            | Default             | Meaning                                                                       |
+| ------------------ | ------------------- | ------------------------------------------------------------------------------ |
+| `autoClose`       | `true`              | Close the harness via vitest's `onTestFinished` when inside a test.           |
+| `protocolVersion` | `'2026-07-28'` (v2) | Hold the connection to one protocol revision - see [lifecycles](/en/docs/api/lifecycles). |
+
+With `autoClose: false` you own the lifetime and call `mcp.close()` yourself. Outside a vitest test context, auto-close is skipped and closing is always yours.

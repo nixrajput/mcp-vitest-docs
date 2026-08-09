@@ -25,3 +25,16 @@ for (const path of ["/en/docs", "/en/docs/getting-started"]) {
   }
 }
 console.log("PASS: docs skeleton pages render");
+
+const API_PAGES = [
+  "mcp-test", "harness", "matchers", "doubles",
+  "notifications", "snapshots", "external-servers", "lifecycles",
+];
+for (const slug of API_PAGES) {
+  const r = await fetch(`${base}/en/docs/api/${slug}`);
+  if (!r.ok) {
+    console.error(`FAIL: /en/docs/api/${slug} returned ${r.status}`);
+    process.exit(1);
+  }
+}
+console.log(`PASS: all ${API_PAGES.length} API pages render`);

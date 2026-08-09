@@ -1,0 +1,57 @@
+---
+title: Testing sampling and elicitation
+description: Answer a server's sampling, elicitation, and roots requests from inside a test.
+---
+
+When a tool asks the client for something - an LLM completion, a confirmation from the user - your test supplies the answer. Register a double and the harness answers on the client's behalf; the tool never knows the difference.
+
+```ts fragment
+const mcp = await mcpTest(() => createServer());
+
+// a function double sees the request
+mcp.onSampling((req) => {
+  expect(req.maxTokens).toBe(50);
+  return {
+    model: "double",
+    role: "assistant",
+    content: { type: "text", text: "short" },
+  };
+});
+
+// or pass a constant result for elicitation
+mcp.onElicitation({ action: "accept", content: { confirm: true } });
+
+const result = await mcp.callTool("summarize", { text: "a very long text" });
+expect(result).toHaveTextContent("summary: short");
+```
+
+Register a double any time before the call that triggers it. Decline and cancel are ordinary results, so `{ action: 'decline' }` exercises the path where the user says no. Forget one and you get a named error rather than a hang: `the server requested sampling but no double is registered.`
+
+A missing double surfaces differently per SDK major, because the mechanisms differ - v1 pushes the request to the client, v2 answers it locally and retries:
+
+```ts fragment
+// v1: comes back as a tool error
+expect(await mcp.callTool("summarize", { text: "x" })).toBeToolError(
+  /no double/,
+);
+// v2: rejects the call
+await expect(mcp.callTool("summarize", { text: "x" })).rejects.toThrow(
+  /no double/,
+);
+```
+
+Three things worth knowing:
+
+- **Doubles need a connection that can carry server-initiated requests.** That is the default everywhere except a v2 or URL connection held to a 2025 revision, which has no such channel - registering there throws immediately rather than letting the call stall.
+- **Sampling and roots are deprecated** as of 2026-07-28 (SEP-2577), with at least a twelve-month window. Elicitation is not.
+- **On v2, a call that uses a double emits an extra progress event** the server never sent - the SDK reports each fulfillment round through the progress channel. It reaches `onProgress` and any progress collector, so assert on the events you care about rather than a bare count.
+
+## Roots
+
+`onRoots` serves the server's `roots/list` requests. **v1 only** - roots is deprecated in the 2026-07-28 revision, so the v2 lane does not advertise the capability and `onRoots` throws there rather than accepting a double that would never fire.
+
+```ts fragment
+mcp.onRoots([{ uri: "file:///workspace" }]);
+const result = await mcp.callTool("list-roots");
+expect(result).toHaveTextContent("roots: file:///workspace");
+```

@@ -1,0 +1,57 @@
+---
+title: Lifecycles
+description: Run the same suite across MCP protocol revisions with createMcpTest.
+---
+
+The 2025 revisions are stateful and let a server push requests to a client; 2026-07-28 is stateless and carries them in-band instead. A server claiming to serve both should be tested on both, so `createMcpTest` can run every test once per revision.
+
+```ts fragment
+const test = createMcpTest(() => createServer(), {
+  lifecycles: ["2025-11-25", "2026-07-28"],
+});
+
+test("echo works on every lifecycle", async ({ mcp }) => {
+  const result = await mcp.callTool("echo", { message: "x" });
+  expect(result).toHaveTextContent("echo: x");
+});
+```
+
+Each test is registered once per revision with the revision appended to its name, each with its own harness, and `mcp.lifecycle` tells a test which one it is on. For a single revision, `protocolVersion` is simpler than a one-element matrix.
+
+| Lane  | `'2025-11-25'`                    | `'2026-07-28'`                      |
+| ----- | ---------------------------------- | -------------------------------------- |
+| v1    | the only revision it negotiates   | throws - the v1 SDK cannot serve it |
+| v2    | legacy mode; no doubles available | default; full support               |
+| stdio | the only revision it negotiates   | throws - stdio is driven by v1      |
+| url   | legacy mode; no doubles available | pinned; otherwise auto-negotiated   |
+
+Exactly two revisions are selectable, which is an SDK property rather than a choice: pinning accepts modern revisions only, and the 2025 era is reachable just as "legacy". `2025-06-18` cannot be pinned. In `lifecycles` mode the returned test is typed `LifecycleMcpTest` and registers plain tests only, so `.skip`, `.only`, `.each`, and `.extend` are compile errors rather than runtime surprises.
+
+## `createMcpTest(serverOrFactory, options?)`
+
+Returns a vitest `test` with an `mcp` fixture: a fresh harness per test, closed after each one. Same arguments as `mcpTest`.
+
+```ts
+import { expect } from "vitest";
+import { createMcpTest } from "mcp-vitest";
+
+const test = createMcpTest(() => createServer());
+
+test("lists prompts", async ({ mcp }) => {
+  await expect(mcp).toHavePrompt("greet");
+});
+```
+
+## Completions
+
+`complete()` asks the server to complete a prompt argument or a resource-template variable, the same call an editor's autocomplete would make.
+
+```ts fragment
+const { completion } = await mcp.complete(
+  { type: "ref/prompt", name: "greet" },
+  { name: "name", value: "A" },
+);
+expect(completion.values).toEqual(["Ada", "Alan"]);
+```
+
+Pass `{ type: 'ref/resource', uri }` to complete a resource template instead.
