@@ -30,7 +30,7 @@ export function FeatureGrid() {
     <section className="mx-auto grid max-w-5xl gap-6 px-4 pb-24 sm:grid-cols-2 lg:grid-cols-3">
       {FEATURES.map((f) => (
         <div key={f.title} className="border-fd-border rounded-lg border p-5">
-          <h3 className="mb-2 font-semibold">{f.title}</h3>
+          <h2 className="mb-2 font-semibold">{f.title}</h2>
           <p className="text-fd-muted-foreground text-sm">{f.body}</p>
         </div>
       ))}
