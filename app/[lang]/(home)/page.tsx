@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { getLatestVersion } from "@/lib/version";
 import { LifecycleMatrix } from "@/components/LifecycleMatrix";
 import { FeatureGrid } from "@/components/FeatureGrid";
 import { InstallCommand } from "@/components/InstallCommand";
@@ -7,10 +8,11 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export default async function HomePage(props: PageProps<"/[lang]">) {
   const { lang } = await props.params;
+  const version = await getLatestVersion();
 
   return (
     <main>
-      <Hero lang={lang} />
+      <Hero lang={lang} version={version} />
       <Reveal>
         <LifecycleMatrix />
       </Reveal>

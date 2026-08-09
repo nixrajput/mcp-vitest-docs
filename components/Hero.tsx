@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { InstallCommand } from "./InstallCommand";
 import { ReporterPane } from "./ReporterPane";
-import { SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
+import { NPM_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
-export function Hero({ lang }: { lang: string }) {
+export function Hero({ lang, version }: { lang: string; version: string }) {
   return (
     <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-12 text-center sm:py-14">
       <div className="flex flex-col items-center gap-4">
@@ -23,7 +23,15 @@ export function Hero({ lang }: { lang: string }) {
         </div>
       </div>
 
-      <InstallCommand />
+      <div className="flex flex-col items-center gap-2">
+        <InstallCommand />
+        <a
+          href={`${NPM_URL}/v/${version}`}
+          className="text-fd-muted-foreground hover:text-fd-foreground rounded-sm font-mono text-xs transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now)"
+        >
+          latest v{version} on npm
+        </a>
+      </div>
       <div className="flex gap-3">
         <Link
           href={`/${lang}/docs`}
