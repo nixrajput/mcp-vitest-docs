@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync }
 import { join } from "node:path";
 
 const OUT = ".samples";
-const FENCE = /```ts(?<meta>[^\n]*)\n(?<code>[\s\S]*?)```/g;
+const FENCE = /```ts(?![a-z])(?<meta>[^\n]*)\n(?<code>[\s\S]*?)```/g;
 
 // Fragments are short snippets that assume an existing harness rather than
 // repeating imports on every page. They only typecheck inside this preamble.
@@ -18,10 +18,9 @@ declare function createServer(): McpServer;
 export async function _fragment() {
 `;
 
-// Docs samples call createServer() because that is what a reader's own code looks
-// like. The stub gives that name a real type so samples typecheck without every
-// page carrying a fixture nobody reads. Built on the v2 SDK's McpServer, the only
-// one createMcpHandler (used in external-servers.mdx) accepts.
+// Docs samples call createServer() as if it were a reader's own code; the stub
+// gives that name a real type so samples typecheck without a fixture on every
+// page. Built on the v2 SDK's McpServer, the only one createMcpHandler accepts.
 const SERVER_STUB = `import { McpServer } from "@modelcontextprotocol/server";
 
 export function createServer(): McpServer {

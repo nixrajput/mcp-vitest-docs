@@ -34,6 +34,12 @@ function isNonLocalizedRoute(pathname: string) {
 }
 
 export default function proxy(request: NextRequest, event: NextFetchEvent) {
+  // Short-circuits the double redirect (`/` -> `/en/` -> `/en`) the i18n proxy would
+  // otherwise produce for the site root.
+  if (request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL(`/${i18n.defaultLanguage}`, request.nextUrl));
+  }
+
   if (isNonLocalizedRoute(request.nextUrl.pathname)) {
     return NextResponse.next();
   }

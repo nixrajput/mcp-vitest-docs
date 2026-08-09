@@ -26,12 +26,14 @@ export const source = loader({
   plugins: [lucideIconsPlugin()],
 });
 
+// Unprefixed on purpose: these handlers live at app/og and app/llms.mdx, outside
+// app/[lang], so a locale segment in the URL would point at a route that doesn't exist.
 export function getPageImageUrl(page: (typeof source)["$inferPage"]) {
   const segments = [...page.slugs, "image.png"];
 
   return {
     segments,
-    url: "/" + [page.locale, ...docsImageRoute.split("/"), ...segments].filter(Boolean).join("/"),
+    url: "/" + [...docsImageRoute.split("/"), ...segments].filter(Boolean).join("/"),
   };
 }
 
@@ -40,7 +42,7 @@ export function getPageMarkdownUrl(page: (typeof source)["$inferPage"]) {
 
   return {
     segments,
-    url: "/" + [page.locale, ...docsContentRoute.split("/"), ...segments].filter(Boolean).join("/"),
+    url: "/" + [...docsContentRoute.split("/"), ...segments].filter(Boolean).join("/"),
   };
 }
 

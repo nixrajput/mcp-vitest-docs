@@ -1,4 +1,6 @@
-// Fails until locale-prefixed routing exists. Run against `next start`.
+// End-to-end route check against a running `next start` server: docs pages, API
+// pages, sitemap/robots, and the unprefixed og-image + llms markdown routes
+// (see lib/source.ts) that must never gain a locale prefix. Run via `npm run check:routes`.
 const base = process.env.BASE_URL ?? "http://localhost:3000";
 const res = await fetch(`${base}/en/docs`, { redirect: "manual" });
 if (!res.ok) {
@@ -47,3 +49,12 @@ for (const path of ["/sitemap.xml", "/robots.txt"]) {
   }
 }
 console.log("PASS: sitemap and robots served");
+
+for (const path of ["/og/docs/api/harness/image.png", "/llms.mdx/docs/api/harness/content.md"]) {
+  const r = await fetch(`${base}${path}`);
+  if (!r.ok) {
+    console.error(`FAIL: ${path} returned ${r.status}`);
+    process.exit(1);
+  }
+}
+console.log("PASS: og-image and llms markdown routes serve unprefixed");

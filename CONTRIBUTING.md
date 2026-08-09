@@ -25,10 +25,11 @@ Open http://localhost:3000 to see the site.
 Every one of these must pass before a PR can merge - CI runs exactly the same set:
 
 ```bash
-npm run lint         # eslint
-npm run types:check  # next typegen + tsc --noEmit
-npm run format:check # prettier --check
-npm run build        # next build
+npm run lint          # eslint
+npm run types:check   # next typegen + tsc --noEmit
+npm run check:samples # extract + typecheck docs code samples
+npm run format:check  # prettier --check
+npm run build         # next build
 ```
 
 `npm run format` rewrites formatting if `format:check` complains.

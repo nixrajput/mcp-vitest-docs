@@ -18,3 +18,16 @@ jobs:
       - run: npm run check:samples
       - run: npm run format:check
       - run: npm run build
+      - name: Check routes
+        run: |
+          set +e
+          npm start &
+          SERVER_PID=$!
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/en >/dev/null && break
+            sleep 1
+          done
+          npm run check:routes
+          EXIT_CODE=$?
+          kill $SERVER_PID
+          exit $EXIT_CODE

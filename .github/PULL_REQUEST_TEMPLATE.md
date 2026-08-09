@@ -24,7 +24,7 @@ Closes #<!-- issue number -->
 
 ## Verification checklist
 
-- [ ] `npm run lint && npm run types:check && npm run format:check && npm run build` - all pass
+- [ ] `npm run lint && npm run types:check && npm run check:samples && npm run format:check && npm run build` - all pass
 - [ ] Code samples in any changed docs pages still typecheck / run as shown
 - [ ] Screenshots attached for visual changes
 - [ ] No unrelated changes included in this PR

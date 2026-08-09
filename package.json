@@ -10,7 +10,8 @@
     "types:check": "next typegen && tsc --noEmit",
     "format": "prettier --write \"{app,components,lib,scripts}/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"{app,components,lib,scripts}/**/*.{ts,tsx,css}\"",
-    "check:samples": "tsx scripts/check-samples.ts && tsc -p tsconfig.samples.json"
+    "check:samples": "tsx scripts/check-samples.ts && tsc -p tsconfig.samples.json",
+    "check:routes": "node scripts/check-routes.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
