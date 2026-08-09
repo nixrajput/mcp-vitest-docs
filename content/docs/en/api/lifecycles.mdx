@@ -34,6 +34,7 @@ Returns a vitest `test` with an `mcp` fixture: a fresh harness per test, closed 
 ```ts
 import { expect } from "vitest";
 import { createMcpTest } from "mcp-vitest";
+import { createServer } from "./server.js";
 
 const test = createMcpTest(() => createServer());
 

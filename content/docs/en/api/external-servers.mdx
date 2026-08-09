@@ -32,8 +32,9 @@ Two things that surprise people:
 Binds a fetch-style handler - what both SDK majors' HTTP handlers expose - to an ephemeral loopback port, so you can point the URL transport at your own server without picking a port:
 
 ```ts
-import { serveHandler } from "mcp-vitest";
+import { mcpTest, serveHandler } from "mcp-vitest";
 import { createMcpHandler } from "@modelcontextprotocol/server";
+import { createServer } from "./server.js";
 
 const served = await serveHandler(createMcpHandler(() => createServer()));
 const mcp = await mcpTest({ url: `${served.url}/mcp` });

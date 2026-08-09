@@ -11,6 +11,7 @@ A manifest records what the server actually reports over the wire, which include
 import { expect } from "vitest";
 import { createMcpTest } from "mcp-vitest";
 import { capabilitiesManifest, toolManifest } from "mcp-vitest/snapshot";
+import { createServer } from "./server.js";
 
 const test = createMcpTest(() => createServer());
 

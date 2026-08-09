@@ -30,3 +30,6 @@ next-env.d.ts
 
 # subagent-driven-development scratch
 .superpowers/
+
+# typecheck-samples extraction output
+.samples/

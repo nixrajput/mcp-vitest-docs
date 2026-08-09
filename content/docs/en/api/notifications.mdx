@@ -12,7 +12,9 @@ expect(progress.items).toHaveLength(10);
 
 // or wait for one that matters
 const collector = mcp.notifications("notifications/progress");
-const halfway = collector.waitFor((n) => n.params.progress >= 5);
+const halfway = collector.waitFor(
+  (n) => (n.params as { progress: number }).progress >= 5,
+);
 await mcp.callTool("slow", { ms: 300 });
 await expect(halfway).resolves.toMatchObject({
   method: "notifications/progress",
