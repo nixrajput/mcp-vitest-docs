@@ -18,7 +18,7 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
         <FeatureGrid />
       </Reveal>
       <Reveal>
-        <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 border-t border-(--line) px-4 py-16 text-center">
+        <section className="mx-auto flex max-w-3xl flex-col items-center gap-4 border-t border-(--line) px-4 py-8 text-center">
           <p className="text-fd-muted-foreground text-sm">
             Same suite. Both SDK majors. Both protocol eras.
           </p>
@@ -26,13 +26,13 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
           <div className="flex gap-4 text-sm">
             <a
               href={REPO_URL}
-              className="text-fd-muted-foreground hover:text-fd-foreground transition-colors"
+              className="text-fd-muted-foreground hover:text-fd-foreground rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now)"
             >
               GitHub
             </a>
             <a
               href={NPM_URL}
-              className="text-fd-muted-foreground hover:text-fd-foreground transition-colors"
+              className="text-fd-muted-foreground hover:text-fd-foreground rounded-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now)"
             >
               npm
             </a>

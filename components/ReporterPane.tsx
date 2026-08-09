@@ -13,6 +13,10 @@ const CHECKS = [
 
 const ERA_COLOR = { old: "var(--era-old)", now: "var(--era-now)" } as const;
 
+// Vitest's watch mode re-runs on change; a full pending-to-green cycle holds
+// here for a while so the loop reads as ambient life, not a distracting GIF.
+const HOLD_MS = 6500;
+
 export function ReporterPane({
   era,
   sdkLabel,
@@ -33,12 +37,36 @@ export function ReporterPane({
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setResolvedCount(0);
-    const timers = CHECKS.map((_, i) =>
-      setTimeout(() => setResolvedCount((n) => Math.max(n, i + 1)), startDelay + i * stepMs),
-    );
-    return () => timers.forEach(clearTimeout);
+    let cancelled = false;
+    let timers: ReturnType<typeof setTimeout>[] = [];
+
+    // Recurses through a timeout rather than setInterval so a full run (reset
+    // -> staggered resolve -> green hold) can schedule its own next start.
+    const runCycle = () => {
+      setResolvedCount(0);
+      timers = CHECKS.map((_, i) =>
+        setTimeout(
+          () => {
+            if (!cancelled) setResolvedCount((n) => Math.max(n, i + 1));
+          },
+          startDelay + i * stepMs,
+        ),
+      );
+      timers.push(
+        setTimeout(
+          () => {
+            if (!cancelled) runCycle();
+          },
+          startDelay + CHECKS.length * stepMs + HOLD_MS,
+        ),
+      );
+    };
+
+    runCycle();
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
   }, [startDelay, stepMs]);
 
   const allResolved = resolvedCount === CHECKS.length;
@@ -46,7 +74,10 @@ export function ReporterPane({
   return (
     <div
       className="rounded-lg border border-t-2 border-(--line) bg-(--surface)"
-      style={{ borderTopColor: ERA_COLOR[era] }}
+      style={{
+        borderTopColor: ERA_COLOR[era],
+        boxShadow: `inset 0 24px 32px -32px ${ERA_COLOR[era]}, 0 12px 24px -20px rgba(0, 0, 0, 0.4)`,
+      }}
     >
       <div className="flex items-center justify-between gap-3 border-b border-(--line) px-3 py-2 font-mono text-xs">
         <span className="text-(--paper)">{sdkLabel}</span>
@@ -79,8 +110,8 @@ export function ReporterPane({
         })}
       </ul>
       <div
-        className={`border-t border-(--line) px-3 py-2 font-mono text-xs text-(--muted) transition-opacity duration-300 ${
-          allResolved ? "opacity-100" : "opacity-0"
+        className={`border-t border-(--line) px-3 py-2 font-mono text-xs transition-opacity duration-300 ${
+          allResolved ? "text-(--pass) opacity-100" : "text-(--muted) opacity-0"
         }`}
       >
         1 file {CHECKS.length} passed ({CHECKS.length})

@@ -17,9 +17,15 @@ const ROWS = [
   },
 ];
 
+// "throws" cells are the exception case, not an error state - italic and a
+// touch dimmer reads as "the caveat" without borrowing red alarm styling.
+function isThrows(cell: string) {
+  return cell.startsWith("throws");
+}
+
 export function LifecycleMatrix() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-16">
+    <section className="mx-auto max-w-3xl px-4 py-8">
       <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
         The matrix
       </p>
@@ -27,16 +33,25 @@ export function LifecycleMatrix() {
         Every SDK major, every protocol revision
       </h2>
       <div className="mt-6 overflow-x-auto rounded-lg border border-(--line)">
-        <table className="w-full min-w-[420px] text-left font-mono text-sm">
+        <table className="w-full min-w-[420px] table-fixed text-left font-mono text-sm">
           <thead>
-            <tr className="border-b border-(--line)">
-              <th scope="col" className="px-3 py-2 font-medium text-(--muted)">
+            <tr>
+              <th
+                scope="col"
+                className="w-20 border-b-2 border-(--line) px-3 py-2 font-medium text-(--muted)"
+              >
                 Lane
               </th>
-              <th scope="col" className="px-3 py-2 font-medium text-(--era-old)">
+              <th
+                scope="col"
+                className="border-b-2 border-(--era-old) px-3 py-2 font-medium text-(--era-old)"
+              >
                 2025-11-25
               </th>
-              <th scope="col" className="px-3 py-2 font-medium text-(--era-now)">
+              <th
+                scope="col"
+                className="border-b-2 border-(--era-now) px-3 py-2 font-medium text-(--era-now)"
+              >
                 2026-07-28
               </th>
             </tr>
@@ -44,9 +59,19 @@ export function LifecycleMatrix() {
           <tbody>
             {ROWS.map((row) => (
               <tr key={row.lane} className="border-b border-(--line) last:border-0">
-                <td className="px-3 py-2 text-(--paper)">{row.lane}</td>
-                <td className="px-3 py-2 text-(--muted)">{row.old}</td>
-                <td className="px-3 py-2 text-(--muted)">{row.now}</td>
+                <th scope="row" className="px-3 py-2 text-left font-semibold text-(--paper)">
+                  {row.lane}
+                </th>
+                <td
+                  className={`px-3 py-2 text-(--muted) ${isThrows(row.old) ? "italic opacity-80" : ""}`}
+                >
+                  {row.old}
+                </td>
+                <td
+                  className={`px-3 py-2 text-(--muted) ${isThrows(row.now) ? "italic opacity-80" : ""}`}
+                >
+                  {row.now}
+                </td>
               </tr>
             ))}
           </tbody>

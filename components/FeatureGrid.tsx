@@ -27,7 +27,7 @@ const FEATURES = [
 
 export function FeatureGrid() {
   return (
-    <section className="mx-auto max-w-3xl px-4 pb-24">
+    <section className="mx-auto max-w-3xl px-4 pb-12">
       <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
         Coverage
       </p>

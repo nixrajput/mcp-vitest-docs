@@ -5,7 +5,8 @@ import { SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
 export function Hero({ lang }: { lang: string }) {
   return (
-    <section className="mx-auto flex max-w-3xl flex-col items-center gap-8 px-4 py-20 text-center sm:py-24">
+    <section className="relative isolate mx-auto flex max-w-3xl flex-col items-center gap-6 overflow-hidden px-4 py-12 text-center sm:py-14">
+      <div aria-hidden className="hero-wash" />
       <div className="flex flex-col items-center gap-4">
         <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
           {SITE_TAGLINE}
@@ -25,13 +26,13 @@ export function Hero({ lang }: { lang: string }) {
       <div className="flex gap-3">
         <Link
           href={`/${lang}/docs`}
-          className="bg-fd-primary text-fd-primary-foreground rounded-lg px-5 py-2.5 transition-opacity hover:opacity-90"
+          className="bg-fd-primary text-fd-primary-foreground rounded-lg px-6 py-3 font-medium shadow-sm transition-all duration-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now) active:scale-[0.97]"
         >
           Get started
         </Link>
         <Link
           href={`/${lang}/docs/api/mcp-test`}
-          className="border-fd-border hover:bg-fd-accent rounded-lg border px-5 py-2.5 transition-colors"
+          className="border-fd-border bg-fd-card hover:bg-fd-accent hover:border-fd-ring rounded-lg border px-6 py-3 font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now) active:scale-[0.97]"
         >
           API reference
         </Link>
