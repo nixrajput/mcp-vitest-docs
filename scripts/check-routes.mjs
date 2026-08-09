@@ -16,3 +16,12 @@ for (const needle of ["mcp-vitest", "npm i -D mcp-vitest", "both MCP SDK majors"
   }
 }
 console.log("PASS: home page renders its positioning copy");
+
+for (const path of ["/en/docs", "/en/docs/getting-started"]) {
+  const r = await fetch(`${base}${path}`);
+  if (!r.ok) {
+    console.error(`FAIL: ${path} returned ${r.status}`);
+    process.exit(1);
+  }
+}
+console.log("PASS: docs skeleton pages render");

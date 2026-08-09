@@ -1,0 +1,41 @@
+---
+title: Getting started
+description: Install mcp-vitest and write your first passing test.
+---
+
+## Install
+
+```bash
+npm i -D mcp-vitest
+```
+
+mcp-vitest requires Node >= 20 and vitest >= 3.2. Your MCP SDK is an optional peer, so install only the major you use.
+
+## Register the matchers
+
+```ts title="vitest.config.ts"
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: { setupFiles: ["mcp-vitest/setup"] },
+});
+```
+
+## Your first test
+
+```ts title="server.test.ts"
+import { expect, test } from "vitest";
+import { mcpTest } from "mcp-vitest";
+import { createServer } from "./server.js";
+
+test("exposes the echo tool", async () => {
+  const mcp = await mcpTest(createServer());
+
+  await expect(mcp).toHaveTool("echo");
+
+  const result = await mcp.callTool("echo", { message: "hi" });
+  expect(result.content[0].text).toBe("echo: hi");
+});
+```
+
+The harness closes itself when the test ends, so there is no teardown to write.
