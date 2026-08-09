@@ -10,3 +10,76 @@ html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+
+/* Amber is always the legacy protocol revision (2025-11-25), violet is always
+   the modern one (2026-07-28) - structural everywhere on this page. :root
+   holds light values; .dark overrides, mirroring fumadocs-ui's own split. */
+:root {
+  --ground: #f7f5fb;
+  --surface: #ece8f2;
+  --line: #dad2e4;
+  --pass: #12875e;
+  --era-now: #5b3fe0;
+  --era-old: #a15a10;
+  --paper: #171320;
+  --muted: #6b6478;
+}
+
+.dark {
+  --ground: #141118;
+  --surface: #1c1822;
+  --line: #2b2533;
+  --pass: #5ee6a8;
+  --era-now: #9b8cff;
+  --era-old: #f0a868;
+  --paper: #e9e6ef;
+  --muted: #8b8496;
+}
+
+/* Registering these as theme fonts (rather than a one-off utility class) means
+   the existing font-mono usage in InstallCommand picks up JetBrains Mono for
+   free, with no change to that component. */
+@theme {
+  --font-display: var(--font-bricolage), var(--font-sans);
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
+}
+
+/* Fumadocs sets these in @layer utilities at the same breakpoints (md, xl);
+   unlayered rules always beat layered ones regardless of specificity, so this
+   narrows both without touching the mobile drawer, which sizes itself alone. */
+@media (width >= 48rem) {
+  #nd-docs-layout {
+    --fd-sidebar-width: 220px;
+  }
+}
+
+@media (width >= 80rem) {
+  #nd-docs-layout {
+    --fd-toc-width: 200px;
+  }
+}
+
+/* Scroll reveal, progressive enhancement: the .reveal class is only ever added
+   by Reveal.tsx once JS + IntersectionObserver + normal motion are confirmed,
+   so SSR and no-JS renders stay fully visible. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--rise-delay, 0s);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+}

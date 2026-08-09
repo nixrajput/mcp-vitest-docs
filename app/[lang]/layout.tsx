@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { RootProvider } from "fumadocs-ui/provider/next";
-import { Inter } from "next/font/google";
+import { Bricolage_Grotesque, Inter, JetBrains_Mono } from "next/font/google";
 import { i18n, localeNames } from "@/lib/i18n";
 import { SITE_DESCRIPTION, SITE_TAGLINE, SITE_URL } from "@/lib/shared";
 import "../global.css";
 
 const inter = Inter({
   subsets: ["latin"],
+});
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
 });
 
 export const metadata: Metadata = {
@@ -21,7 +31,11 @@ export default async function Layout({ children, params }: LayoutProps<"/[lang]"
   const { lang } = await params;
 
   return (
-    <html lang={lang} className={inter.className} suppressHydrationWarning>
+    <html
+      lang={lang}
+      className={`${inter.className} ${bricolage.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-screen flex-col">
         <RootProvider
           i18n={{

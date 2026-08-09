@@ -27,13 +27,19 @@ const FEATURES = [
 
 export function FeatureGrid() {
   return (
-    <section className="mx-auto grid max-w-5xl gap-6 px-4 pb-24 sm:grid-cols-2 lg:grid-cols-3">
-      {FEATURES.map((f) => (
-        <div key={f.title} className="border-fd-border rounded-lg border p-5">
-          <h2 className="mb-2 font-semibold">{f.title}</h2>
-          <p className="text-fd-muted-foreground text-sm">{f.body}</p>
-        </div>
-      ))}
+    <section className="mx-auto max-w-3xl px-4 pb-24">
+      <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
+        Coverage
+      </p>
+      <h2 className="mt-2 text-2xl font-bold tracking-tight">What mcp-vitest covers</h2>
+      <dl className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+        {FEATURES.map((f) => (
+          <div key={f.title} className="border-t border-(--line) pt-3">
+            <dt className="font-semibold">{f.title}</dt>
+            <dd className="text-fd-muted-foreground mt-1 text-sm">{f.body}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
