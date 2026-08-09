@@ -9,20 +9,22 @@ export function Mark({ size = 20 }: { size?: number }) {
       aria-hidden="true"
       className="size-5 shrink-0"
     >
-      {/* Two discrete revisions, not a blend: amber ends where violet begins. */}
+      {/* The round trip the harness drives: request out, response back. */}
       <path
-        d="M8 16.5 L13.5 22"
+        d="M8 12.5 H21 M17 8.5 L21 12.5 L17 16.5"
         fill="none"
         stroke="var(--era-old)"
-        strokeWidth="3.6"
+        strokeWidth="2.8"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
-        d="M13.5 22 L24 10"
+        d="M24 21.5 H11 M15 17.5 L11 21.5 L15 25.5"
         fill="none"
         stroke="var(--era-now)"
-        strokeWidth="3.6"
+        strokeWidth="2.8"
         strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

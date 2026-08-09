@@ -21,18 +21,20 @@ export default function AppleIcon() {
       {/* No <title>: satori renders it as visible text rather than metadata. */}
       <svg width="120" height="120" viewBox="0 0 32 32">
         <path
-          d="M8 16.5 L13.5 22"
+          d="M8 12.5 H21 M17 8.5 L21 12.5 L17 16.5"
           fill="none"
           stroke="#f0a868"
-          strokeWidth="3.2"
+          strokeWidth="2.8"
           strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
-          d="M13.5 22 L24 10"
+          d="M24 21.5 H11 M15 17.5 L11 21.5 L15 25.5"
           fill="none"
           stroke="#9b8cff"
-          strokeWidth="3.2"
+          strokeWidth="2.8"
           strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </div>,
