@@ -6,3 +6,13 @@ if (!res.ok) {
   process.exit(1);
 }
 console.log("PASS: /en/docs serves 200");
+
+const home = await fetch(`${base}/en`);
+const html = await home.text();
+for (const needle of ["mcp-vitest", "npm i -D mcp-vitest", "both MCP SDK majors"]) {
+  if (!html.includes(needle)) {
+    console.error(`FAIL: home page missing ${JSON.stringify(needle)}`);
+    process.exit(1);
+  }
+}
+console.log("PASS: home page renders its positioning copy");
