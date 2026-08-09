@@ -5,14 +5,15 @@ import { SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
 export function Hero({ lang }: { lang: string }) {
   return (
-    <section className="relative isolate mx-auto flex max-w-3xl flex-col items-center gap-6 overflow-hidden px-4 py-12 text-center sm:py-14">
-      <div aria-hidden className="hero-wash" />
+    <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-12 text-center sm:py-14">
       <div className="flex flex-col items-center gap-4">
         <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
           {SITE_TAGLINE}
         </h1>
         <p className="text-fd-muted-foreground text-lg">{SITE_DESCRIPTION}</p>
       </div>
+
+      <div aria-hidden className="hero-rule" />
 
       <div className="w-full text-left">
         <p className="mb-2 pl-1 font-mono text-xs text-(--muted)">test/completions.test.ts</p>

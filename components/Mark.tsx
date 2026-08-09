@@ -9,19 +9,20 @@ export function Mark({ size = 20 }: { size?: number }) {
       aria-hidden="true"
       className="size-5 shrink-0"
     >
-      <defs>
-        <linearGradient id="mark-era" x1="0" y1="1" x2="1" y2="0">
-          <stop offset="0" stopColor="var(--era-old)" />
-          <stop offset="1" stopColor="var(--era-now)" />
-        </linearGradient>
-      </defs>
+      {/* Two discrete revisions, not a blend: amber ends where violet begins. */}
       <path
-        d="M8 16.5 L13.5 22 L24 10"
+        d="M8 16.5 L13.5 22"
         fill="none"
-        stroke="url(#mark-era)"
+        stroke="var(--era-old)"
         strokeWidth="3.6"
         strokeLinecap="round"
-        strokeLinejoin="round"
+      />
+      <path
+        d="M13.5 22 L24 10"
+        fill="none"
+        stroke="var(--era-now)"
+        strokeWidth="3.6"
+        strokeLinecap="round"
       />
     </svg>
   );
