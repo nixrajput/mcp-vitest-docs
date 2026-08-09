@@ -3,7 +3,7 @@ title: Lifecycles
 description: Run the same suite across MCP protocol revisions with createMcpTest.
 ---
 
-The 2025 revisions are stateful and let a server push requests to a client; 2026-07-28 is stateless and carries them in-band instead. A server claiming to serve both should be tested on both, so `createMcpTest` can run every test once per revision.
+The 2025 revisions are stateful and let a server push requests to a client; 2026-07-28 is stateless and carries them in-band instead. A server claiming to serve both should be tested on both, so `createMcpTest` (below) can run every test once per revision.
 
 ```ts fragment
 const test = createMcpTest(() => createServer(), {

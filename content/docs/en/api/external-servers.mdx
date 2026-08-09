@@ -5,11 +5,15 @@ description: Test a server you cannot import, over stdio or HTTP, with serveHand
 
 Not every server can be imported. `mcpTest` also takes a spawn spec or a URL, and everything else - matchers, collectors, doubles, snapshots - works exactly as in-process. Both report `mcp.kind === 'external'`.
 
-```ts fragment
-// spawn one over stdio; env and cwd are accepted too
-const mcp = await mcpTest({ command: "node", args: ["./dist/server.js"] });
+Spawn one over stdio; `env` and `cwd` are accepted too:
 
-// or reach one already running, over Streamable HTTP
+```ts fragment
+const mcp = await mcpTest({ command: "node", args: ["./dist/server.js"] });
+```
+
+Or reach one already running, over Streamable HTTP:
+
+```ts fragment
 const mcp = await mcpTest({
   url: "https://example.com/mcp",
   headers: { authorization: "Bearer test-token" },

@@ -3,7 +3,7 @@ title: McpHarness
 description: The methods and properties available on the harness returned by mcpTest() and createMcpTest().
 ---
 
-`mcpTest()` and `createMcpTest()` both resolve to a harness with this shape:
+`mcpTest()` resolves to a harness with this shape. `createMcpTest()` returns a vitest `test` wrapper instead, whose per-test `mcp` fixture has the same shape.
 
 | Member                         | Returns                                                  |
 | ------------------------------- | ---------------------------------------------------------- |
