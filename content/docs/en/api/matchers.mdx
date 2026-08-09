@@ -1,0 +1,26 @@
+---
+title: Matchers
+description: Typed vitest matchers for MCP tools, resources, prompts, and tool results.
+---
+
+mcp-vitest adds these typed matchers for tools, resources, prompts, and results:
+
+| Matcher                            | Asserts                                                                     |
+| ------------------------------------ | ------------------------------------------------------------------------------ |
+| `toHaveTool(name)`                 | the server exposes that tool (suggests near-misses on typos)                |
+| `toHaveResource(uri)`              | the server exposes that resource                                            |
+| `toHavePrompt(name)`               | the server exposes that prompt                                              |
+| `toHaveTextContent(string\|regex)` | a tool result's text content matches                                        |
+| `toHaveContent(partial)`           | some content part matches the given fields (values may be regexes)          |
+| `toMatchOutputSchema(schema?)`     | `structuredContent` satisfies the tool's declared schema, or the one passed |
+| `toBeToolError(string\|regex?)`    | a tool result has `isError: true`, optionally matching text                 |
+
+The three server matchers query the live server, so they are async: `await expect(mcp).toHaveTool('x')`. The four result matchers are synchronous.
+
+`setupFiles: ['mcp-vitest/setup']` registers all of them. To register them manually instead:
+
+```ts
+import { registerMatchers } from "mcp-vitest";
+
+registerMatchers();
+```

@@ -1,0 +1,13 @@
+{
+  "title": "API",
+  "pages": [
+    "mcp-test",
+    "harness",
+    "matchers",
+    "doubles",
+    "notifications",
+    "snapshots",
+    "external-servers",
+    "lifecycles"
+  ]
+}

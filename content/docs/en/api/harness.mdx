@@ -1,0 +1,58 @@
+---
+title: McpHarness
+description: The methods and properties available on the harness returned by mcpTest() and createMcpTest().
+---
+
+`mcpTest()` resolves to a harness with this shape. `createMcpTest()` returns a vitest `test` wrapper instead, whose per-test `mcp` fixture has the same shape.
+
+| Member                         | Returns                                                  |
+| ------------------------------- | ---------------------------------------------------------- |
+| `kind`                         | `'v1'`, `'v2'`, or `'external'`                          |
+| `lifecycle`                    | the protocol revision this connection is held to, if any |
+| `client`                       | the underlying SDK client (escape hatch)                 |
+| `listTools()`                  | every tool, following pagination                         |
+| `callTool(name, args?, opts?)` | the tool result - see [call options](#call-options)      |
+| `listResources()`              | every resource, following pagination                     |
+| `readResource(uri)`            | `{ contents }`                                           |
+| `listPrompts()`                | every prompt, following pagination                       |
+| `getPrompt(name, args?)`       | `{ messages }`                                           |
+| `complete(ref, argument)`      | `{ completion }` - see [completions](/en/docs/api/lifecycles#completions) |
+| `onSampling(double)`           | answers the server's sampling requests                   |
+| `onElicitation(double)`        | answers the server's elicitation requests                |
+| `onRoots(roots)`               | serves `roots/list` (v1 only)                             |
+| `notifications(method?)`       | a [notification collector](/en/docs/api/notifications)   |
+| `close()`                      | disconnects; idempotent                                   |
+
+Anything the harness does not wrap is one hop away on `mcp.client`.
+
+## Call options
+
+`callTool` takes an options bag for progress, cancellation, and timeouts. Each option maps onto the underlying SDK's own request options, so behavior is the SDK's, not a reimplementation.
+
+```ts fragment
+// progress
+const seen: number[] = [];
+await mcp.callTool(
+  "slow",
+  { ms: 200 },
+  { onProgress: (p) => seen.push(p.progress) },
+);
+
+// cancellation
+const ac = new AbortController();
+setTimeout(() => ac.abort(), 50);
+await expect(
+  mcp.callTool("slow", { ms: 5000 }, { signal: ac.signal }),
+).rejects.toThrow();
+
+// timeout
+await expect(
+  mcp.callTool("slow", { ms: 5000 }, { timeoutMs: 100 }),
+).rejects.toThrow();
+```
+
+| Option       | Type                                                                  |
+| ------------- | ------------------------------------------------------------------------ |
+| `onProgress` | `(p: { progress: number; total?: number; message?: string }) => void` |
+| `signal`     | `AbortSignal`                                                          |
+| `timeoutMs`  | `number`                                                                |

@@ -1,0 +1,13 @@
+---
+title: Introduction
+description: Vitest-native testing for Model Context Protocol servers.
+---
+
+Testing an MCP server usually means spawning a subprocess, picking a port, or hand-rolling JSON-RPC frames. By default mcp-vitest does none of that: your server runs in-process, driven by a real SDK `Client` over the SDK's own in-process transport, and you get a small harness plus typed matchers on top. When a server cannot be imported, the same harness drives it over stdio or a URL instead.
+
+The protocol is never reimplemented, so what your tests exercise is what a real client would.
+
+## Where to go next
+
+- [Getting started](/en/docs/getting-started) installs the package and writes your first test.
+- [`mcpTest()`](/en/docs/api/mcp-test) is the entry point for everything.

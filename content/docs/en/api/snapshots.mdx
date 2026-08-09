@@ -1,0 +1,44 @@
+---
+title: Snapshot testing
+description: Snapshot a server's tool, resource, and prompt surface, and validate structured output against its schema.
+---
+
+Manifest helpers return normalized, deep-sorted objects - stable across runs, with entry-level `_meta` and `undefined` values dropped - so vitest's built-in snapshots catch unintended API changes to your server.
+
+A manifest records what the server actually reports over the wire, which includes descriptor fields your MCP SDK adds for you (for example `execution` or a `$schema` on generated schemas). An SDK upgrade can therefore move a snapshot without your server changing; review the diff and update it as you would any snapshot. Capabilities your server does not expose come back empty rather than failing, so a tools-only server snapshots cleanly.
+
+```ts
+import { expect } from "vitest";
+import { createMcpTest } from "mcp-vitest";
+import { capabilitiesManifest, toolManifest } from "mcp-vitest/snapshot";
+import { createServer } from "./server.js";
+
+const test = createMcpTest(() => createServer());
+
+test("tool surface is unchanged", async ({ mcp }) => {
+  expect(await toolManifest(mcp)).toMatchSnapshot();
+});
+
+test("capabilities are unchanged", async ({ mcp }) => {
+  // { tools: string[], resources: string[], prompts: string[] }, names only
+  expect(await capabilitiesManifest(mcp)).toMatchSnapshot();
+});
+```
+
+`toolManifest`, `resourceManifest`, `promptManifest`, and `capabilitiesManifest` are available from `mcp-vitest/snapshot` or the package root.
+
+## Structured output
+
+`toMatchOutputSchema()` validates a result's `structuredContent` against the schema the tool declared in `tools/list`. Pass a JSON Schema explicitly to validate against something else.
+
+```ts fragment
+const result = await mcp.callTool("weather");
+expect(result).toMatchOutputSchema();
+expect(result).toMatchOutputSchema({
+  type: "object",
+  properties: { temperature: { type: "number" }, unit: { type: "string" } },
+  required: ["temperature", "unit"],
+});
+```
+
+Note that both SDK majors validate declared output schemas server-side: if a tool's output violates its own schema, the call comes back as a tool error (`toBeToolError()`) rather than delivering invalid `structuredContent`. The explicit-schema form is what you want for asserting a contract the tool does not declare.

@@ -1,0 +1,47 @@
+---
+title: Testing an external server
+description: Test a server you cannot import, over stdio or HTTP, with serveHandler and detectServerKind.
+---
+
+Not every server can be imported. `mcpTest` also takes a spawn spec or a URL, and everything else - matchers, collectors, doubles, snapshots - works exactly as in-process. Both report `mcp.kind === 'external'`.
+
+Spawn one over stdio; `env` and `cwd` are accepted too:
+
+```ts fragment
+const mcp = await mcpTest({ command: "node", args: ["./dist/server.js"] });
+```
+
+Or reach one already running, over Streamable HTTP:
+
+```ts fragment
+const mcp = await mcpTest({
+  url: "https://example.com/mcp",
+  headers: { authorization: "Bearer test-token" },
+});
+```
+
+The child process is terminated when the harness closes, which the fixture does for you. `headers` are merged into every request, which is the seam for auth-protected servers.
+
+Two things that surprise people:
+
+- **`env` does not extend your environment, it replaces most of it.** The SDK starts from a small allowlist (`HOME`, `LOGNAME`, `PATH`, `SHELL`, `TERM`, `USER`, and platform equivalents) and merges yours on top, so a server reading `API_KEY` from the ambient environment will not see it unless you pass it explicitly.
+- **A URL connection does not pin a protocol revision.** The server is not yours and may implement any era, so negotiation probes and meets it where it is. Pass `protocolVersion` to hold it to one.
+
+## `serveHandler(handler)`
+
+Binds a fetch-style handler - what both SDK majors' HTTP handlers expose - to an ephemeral loopback port, so you can point the URL transport at your own server without picking a port:
+
+```ts
+import { mcpTest, serveHandler } from "mcp-vitest";
+import { createMcpHandler } from "@modelcontextprotocol/server";
+import { createServer } from "./server.js";
+
+const served = await serveHandler(createMcpHandler(() => createServer()));
+const mcp = await mcpTest({ url: `${served.url}/mcp` });
+// ...
+await served.close();
+```
+
+## `detectServerKind(server)`
+
+Resolves `'v1'` or `'v2'` for an SDK server object, or rejects with a message naming what to pass instead. Exported for the rare case you need to branch on the SDK major yourself.
