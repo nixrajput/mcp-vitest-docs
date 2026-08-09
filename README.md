@@ -115,6 +115,7 @@ A few things worth knowing before you start:
 - Untranslated pages fall back to English automatically, so a partial translation is a valid PR - you do not need to translate everything at once.
 - Code samples inside MDX should not be translated. They are typechecked against the real package by `npm run check:samples`, and translating identifiers will fail that check. Translate the prose around them instead.
 - Every URL carries its locale (`/en/...`, `/<code>/...`), so a new language never changes existing URLs.
+- Internal links in the content are written locale-prefixed, for example `/en/docs/api/matchers`. When you copy a page, point its links at your own locale, or readers will be bounced back to English mid-article.
 - Run [the checks a PR must pass](#the-checks-a-pr-must-pass) before opening the PR.
 
 ## Contributing

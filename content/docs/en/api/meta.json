@@ -1,6 +1,7 @@
 {
   "title": "API",
   "pages": [
+    "index",
     "mcp-test",
     "harness",
     "matchers",

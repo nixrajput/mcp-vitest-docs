@@ -1,0 +1,36 @@
+---
+title: API reference
+description: Every export mcp-vitest ships, grouped by what you reach for it to do.
+---
+
+Everything here builds on one entry point. [`mcpTest()`](/en/docs/api/mcp-test) connects a server and hands back a harness; the rest of the API is what that harness can do and how you assert on it.
+
+New to the package? [Getting started](/en/docs/getting-started) is a shorter path in.
+
+## Connecting
+
+[`mcpTest(serverOrFactory, options?)`](/en/docs/api/mcp-test) connects a server and returns an `McpHarness`, the entry point every other API builds on.
+
+[`McpHarness`](/en/docs/api/harness) covers the methods and properties available on the harness, including the raw SDK client as an escape hatch.
+
+## Asserting
+
+[Matchers](/en/docs/api/matchers) are the typed vitest matchers for tools, resources, prompts, and tool results.
+
+[Snapshot testing](/en/docs/api/snapshots) snapshots a server's tool, resource, and prompt surface, and validates structured output against its declared schema.
+
+## Answering the server
+
+[Testing sampling and elicitation](/en/docs/api/doubles) answers a server's sampling, elicitation, and roots requests from inside a test.
+
+[Notifications](/en/docs/api/notifications) collects and waits on notifications a server pushes to the client.
+
+## Where the server runs
+
+[Testing an external server](/en/docs/api/external-servers) tests a server you cannot import, over stdio or HTTP, with `serveHandler` and `detectServerKind`.
+
+[Lifecycles](/en/docs/api/lifecycles) runs the same suite across MCP protocol revisions with `createMcpTest`.
+
+## Migrating
+
+Upgrading from an older release? [Migration notes](/en/docs/migrating) lists what changed and what to do about it.
