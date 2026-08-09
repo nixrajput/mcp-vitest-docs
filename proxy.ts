@@ -20,6 +20,8 @@ const i18nProxy = createI18nMiddleware(i18n);
 const NON_LOCALIZED_ROUTES = [
   '/_next',
   '/favicon.ico',
+  '/icon.svg',
+  '/apple-icon',
   '/llms.txt',
   '/llms-full.txt',
   '/llms.mdx',

@@ -84,6 +84,15 @@ html > body[data-scroll-locked] {
   --color-fd-muted-foreground: var(--muted);
 }
 
+/* The aside's own bg-fd-card reads --surface at full strength, which read as
+   a second panel stitched onto the page. Softening it toward --ground (kept
+   as color-mix so it flips with --surface/--ground per theme, no .dark copy
+   needed) lets docs read as one surface while nav hover/active states above
+   still pop against it since those keep the untouched --surface value. */
+#nd-sidebar {
+  --color-fd-card: color-mix(in srgb, var(--surface) 35%, var(--ground) 65%);
+}
+
 /* Registering these as theme fonts (rather than a one-off utility class) means
    the existing font-mono usage in InstallCommand picks up JetBrains Mono for
    free, with no change to that component. */
@@ -132,23 +141,10 @@ html > body[data-scroll-locked] {
   }
 }
 
-/* Two soft blobs keyed to the era colors, standing in for the amber/violet
-   duality the whole page is built on. Kept as a background-image (not an
-   element) so it never intercepts clicks and never needs its own stacking
-   context beyond the hero's own isolate. */
-.hero-wash {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    radial-gradient(
-      40% 50% at 28% 20%,
-      color-mix(in srgb, var(--era-old) 20%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      40% 50% at 74% 12%,
-      color-mix(in srgb, var(--era-now) 20%, transparent),
-      transparent 70%
-    );
+/* A hairline stand-in for the old wash: two discrete revisions, not a
+   blend between them, so it is one neutral rule rather than an era color. */
+.hero-rule {
+  width: 3rem;
+  height: 1px;
+  background: var(--line);
 }
