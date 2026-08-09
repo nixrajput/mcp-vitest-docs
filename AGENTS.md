@@ -8,12 +8,12 @@ Last updated: 2026-08-09
 
 This repo is the documentation site for the **mcp-vitest** npm package, deployed at https://mcp-vitest.nixrajput.com. It is a Next.js + Fumadocs app.
 
-| Area          | Detail                                                      |
-| ------------- | ------------------------------------------------------------ |
-| Language      | TypeScript, ESM only, Node `>=20`                             |
-| Framework     | Next.js 16 (App Router) + Fumadocs                            |
-| Lint / format | ESLint + Prettier - double quotes, semicolons, 100 columns   |
-| Content       | MDX under `content/docs/en/`                                 |
+| Area          | Detail                                                     |
+| ------------- | ---------------------------------------------------------- |
+| Language      | TypeScript, ESM only, Node `>=20`                          |
+| Framework     | Next.js 16 (App Router) + Fumadocs                         |
+| Lint / format | ESLint + Prettier - double quotes, semicolons, 100 columns |
+| Content       | MDX under `content/docs/en/`                               |
 
 ### Layout
 

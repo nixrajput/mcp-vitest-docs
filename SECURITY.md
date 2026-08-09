@@ -25,7 +25,7 @@ Send a description of the vulnerability to **<nkr.nikhil.nkr@gmail.com>**. Inclu
 ## Response expectations
 
 | Milestone          | Target                           |
-| ------------------- | -------------------------------- |
+| ------------------ | -------------------------------- |
 | Acknowledgement    | Within 72 hours                  |
 | Initial assessment | Within 7 days                    |
 | Fix or mitigation  | Within 30 days for high-severity |
