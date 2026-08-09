@@ -25,6 +25,8 @@ const NON_LOCALIZED_ROUTES = [
   '/llms.mdx',
   '/og',
   '/api',
+  '/sitemap.xml',
+  '/robots.txt',
 ];
 
 function isNonLocalizedRoute(pathname: string) {

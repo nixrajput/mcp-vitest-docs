@@ -38,3 +38,12 @@ for (const slug of API_PAGES) {
   }
 }
 console.log(`PASS: all ${API_PAGES.length} API pages render`);
+
+for (const path of ["/sitemap.xml", "/robots.txt"]) {
+  const r = await fetch(`${base}${path}`);
+  if (!r.ok) {
+    console.error(`FAIL: ${path} returned ${r.status}`);
+    process.exit(1);
+  }
+}
+console.log("PASS: sitemap and robots served");
