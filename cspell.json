@@ -1,23 +1,34 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
-  "language": "en",
+  "language": "en,en-GB",
   "words": [
+    "cnfast",
     "frontmatter",
     "fumadocs",
     "lifecycles",
+    "llms",
+    "LOGNAME",
     "mcp",
     "mdx",
     "modelcontextprotocol",
     "nextjs",
     "Nikhil",
     "nixrajput",
+    "notype",
     "orama",
+    "reimplementation",
     "sarif",
     "scorecard",
     "shiki",
     "Streamable",
+    "stylesheet",
+    "stylesheets",
     "tailwind",
+    "ttfb",
+    "typecheckable",
+    "unlayered",
+    "unminified",
     "vercel",
     "vitest"
   ],
@@ -25,6 +36,9 @@
     "node_modules/**",
     ".next/**",
     ".source/**",
-    "package-lock.json"
+    "package-lock.json",
+    ".samples/**",
+    "public/**",
+    "*.tsbuildinfo"
   ]
 }
