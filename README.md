@@ -1,17 +1,29 @@
 <div align="center">
 
+<img src="https://raw.githubusercontent.com/nixrajput/mcp-vitest/main/assets/logo.svg" width="76" alt="mcp-vitest">
+
 # mcp-vitest docs
 
-Documentation site for [mcp-vitest](https://github.com/nixrajput/mcp-vitest), a Vitest-native testing harness for Model Context Protocol servers.
+<em>The site behind <a href="https://www.npmjs.com/package/mcp-vitest">mcp-vitest</a>.</em>
 
 <br />
 
+[![CI](https://github.com/nixrajput/mcp-vitest-docs/actions/workflows/ci.yml/badge.svg)][ci]
 [![Stars](https://img.shields.io/github/stars/nixrajput/mcp-vitest-docs?color=159F7C)][repo]
 [![Contributors](https://img.shields.io/github/contributors/nixrajput/mcp-vitest-docs?color=159F7C)][contributors]
 [![License: MIT](https://img.shields.io/github/license/nixrajput/mcp-vitest-docs?color=159F7C)][license]
 [![Last commit](https://img.shields.io/github/last-commit/nixrajput/mcp-vitest-docs?label=last%20commit)][repo]
 [![Issues](https://img.shields.io/github/issues/nixrajput/mcp-vitest-docs?label=issues)][issues]
 [![PRs](https://img.shields.io/github/issues-pr/nixrajput/mcp-vitest-docs?label=PRs)][pulls]
+
+<strong>Next.js 16 &middot; Fumadocs &middot; i18n from day one &middot; code samples typechecked against the published package</strong><br>
+<sub>Every <code>ts</code> fence in these docs is extracted and compiled against <code>mcp-vitest</code> <strong>installed from npm</strong>, so a sample that stops matching the shipped package fails the build rather than misleading a reader. That gate is what keeps the docs honest now that they live in a different repo from the code.</sub>
+
+<br />
+
+**[Live site][site]** &middot; [Getting started][docs-start] &middot; [API reference][docs-api] &middot; [llms.txt][llms]
+
+<sub><b>AI agents / LLMs:</b> this documentation is machine-readable at <a href="https://mcp-vitest.nixrajput.com/llms.txt"><code>llms.txt</code></a>, or as one blob at <a href="https://mcp-vitest.nixrajput.com/llms-full.txt"><code>llms-full.txt</code></a>.</sub>
 
 </div>
 
@@ -55,7 +67,7 @@ This repo holds the documentation content and the site that serves it, live at [
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) `>=20`
+- [Node.js](https://nodejs.org/) `>=20.9` - Next 16's own floor, so `20.0` through `20.8` will not install
 - npm
 
 ### Install
@@ -169,6 +181,11 @@ This site is MIT licensed and free to use, always. If it helps you get more out 
 
 </div>
 
+[ci]: https://github.com/nixrajput/mcp-vitest-docs/actions/workflows/ci.yml
+[site]: https://mcp-vitest.nixrajput.com
+[llms]: https://mcp-vitest.nixrajput.com/llms.txt
+[docs-start]: https://mcp-vitest.nixrajput.com/en/docs/getting-started
+[docs-api]: https://mcp-vitest.nixrajput.com/en/docs/api/mcp-test
 [repo]: https://github.com/nixrajput/mcp-vitest-docs
 [issues]: https://github.com/nixrajput/mcp-vitest-docs/issues
 [pulls]: https://github.com/nixrajput/mcp-vitest-docs/pulls
