@@ -58,4 +58,8 @@ for (const file of walk("content/docs")) {
   }
 }
 
+// tsc fails with TS18003 when its include matches nothing, so a docs tree with no
+// typecheckable fences would fail the gate rather than pass it vacuously.
+if (count === 0) writeFileSync(join(OUT, "_none.ts"), "export {};\n");
+
 console.log(`extracted ${count} samples`);
