@@ -26,6 +26,7 @@
     "stylesheets",
     "tailwind",
     "ttfb",
+    "typecheckable",
     "unlayered",
     "unminified",
     "vercel",
