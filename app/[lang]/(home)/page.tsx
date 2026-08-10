@@ -4,7 +4,6 @@ import { LifecycleMatrix } from "@/components/LifecycleMatrix";
 import { FeatureGrid } from "@/components/FeatureGrid";
 import { InstallCommand } from "@/components/InstallCommand";
 import { Reveal } from "@/components/Reveal";
-import { SiteFooter } from "@/components/SiteFooter";
 
 export default async function HomePage(props: PageProps<"/[lang]">) {
   const { lang } = await props.params;
@@ -27,7 +26,6 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
           <InstallCommand />
         </section>
       </Reveal>
-      <SiteFooter lang={lang} />
     </main>
   );
 }
