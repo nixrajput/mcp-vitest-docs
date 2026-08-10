@@ -2,6 +2,19 @@
 // pages, sitemap/robots, and the unprefixed og-image + llms markdown routes
 // (see lib/source.ts) that must never gain a locale prefix. Run via `npm run check:routes`.
 const base = process.env.BASE_URL ?? "http://localhost:3000";
+
+// Without this, a server that is not running fails as an undici stack trace that says
+// nothing about what to do.
+const originalFetch = globalThis.fetch;
+globalThis.fetch = async (...args) => {
+  try {
+    return await originalFetch(...args);
+  } catch {
+    console.error(`FAIL: nothing is listening at ${base}`);
+    console.error("Start the site first:  npm start   (or BASE_URL=... npm run check:routes)");
+    process.exit(1);
+  }
+};
 const res = await fetch(`${base}/en/docs`, { redirect: "manual" });
 if (!res.ok) {
   console.error(`FAIL: /en/docs returned ${res.status}, expected 200`);
@@ -18,6 +31,24 @@ for (const needle of ["mcp-vitest", "npm i -D mcp-vitest", "both MCP SDK majors"
   }
 }
 console.log("PASS: home page renders its positioning copy");
+
+// The i18n proxy rewriting /_next/** kills every stylesheet while the page still returns
+// 200. Discovered by reference, not by path: Next 16 emits CSS under static/chunks, so a
+// hardcoded static/css path matches nothing and reads as a pass.
+const sheets = [...html.matchAll(/href="(\/_next\/[^"]+\.css)"/g)].map((m) => m[1]);
+if (sheets.length === 0) {
+  console.error("FAIL: home page references no stylesheet");
+  process.exit(1);
+}
+for (const sheet of sheets) {
+  const r = await fetch(`${base}${sheet}`, { redirect: "manual" });
+  const body = r.ok ? await r.text() : "";
+  if (!r.ok || body.length === 0) {
+    console.error(`FAIL: stylesheet ${sheet} returned ${r.status} with ${body.length} bytes`);
+    process.exit(1);
+  }
+}
+console.log(`PASS: ${sheets.length} stylesheet(s) serve with content`);
 
 for (const path of ["/en/docs", "/en/docs/getting-started"]) {
   const r = await fetch(`${base}${path}`);
