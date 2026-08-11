@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { InstallCommand } from "./InstallCommand";
-import { ReporterPane } from "./ReporterPane";
 import { NPM_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
 export function Hero({ lang, version }: { lang: string; version: string }) {
@@ -18,14 +17,6 @@ export function Hero({ lang, version }: { lang: string; version: string }) {
         className="enter hero-rule"
         style={{ "--enter-delay": "80ms" } as React.CSSProperties}
       />
-
-      <div className="w-full text-left">
-        <p className="mb-2 pl-1 font-mono text-xs text-(--muted)">test/completions.test.ts</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <ReporterPane era="old" sdkLabel="SDK v1" revision="2025-11-25" startDelay={500} />
-          <ReporterPane era="now" sdkLabel="SDK v2" revision="2026-07-28" startDelay={650} />
-        </div>
-      </div>
 
       <div
         className="enter flex flex-col items-center gap-2"

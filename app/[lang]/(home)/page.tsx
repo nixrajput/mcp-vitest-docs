@@ -1,6 +1,7 @@
 import { Hero } from "@/components/Hero";
 import { getLatestVersion } from "@/lib/version";
 import { LifecycleMatrix } from "@/components/LifecycleMatrix";
+import { ReporterDemo } from "@/components/ReporterDemo";
 import { FeatureGrid } from "@/components/FeatureGrid";
 import { InstallCommand } from "@/components/InstallCommand";
 import { Reveal } from "@/components/Reveal";
@@ -12,6 +13,9 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
   return (
     <main>
       <Hero lang={lang} version={version} />
+      <Reveal>
+        <ReporterDemo />
+      </Reveal>
       <Reveal>
         <LifecycleMatrix />
       </Reveal>
