@@ -18,3 +18,7 @@ const mcp = await mcpTest(() => createServer());
 | `protocolVersion` | `'2026-07-28'` (v2) | Hold the connection to one protocol revision - see [lifecycles](/en/docs/api/lifecycles). |
 
 With `autoClose: false` you own the lifetime and call `mcp.close()` yourself. Outside a vitest test context, auto-close is skipped and closing is always yours.
+
+## What a connection costs
+
+Connecting per test rather than sharing one harness is the point - each test gets a clean server - and it is cheap enough not to think about. From the package's own `npm run bench`, a fresh server plus a full `initialize` handshake costs **0.24ms on SDK v1** and **0.47ms on v2** (means of 8,270 and 4,284 samples, +/-2.3% and +/-3.6%). There is no process to fork and no socket to open, so the cost is a few function calls and the SDK's own handshake.

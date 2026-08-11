@@ -18,6 +18,29 @@ test("echo works on every lifecycle", async ({ mcp }) => {
 
 Each test is registered once per revision with the revision appended to its name, each with its own harness, and `mcp.lifecycle` tells a test which one it is on. For a single revision, `protocolVersion` is simpler than a one-element matrix.
 
+## Where a stateful server bites
+
+Statelessness is not only about who pushes notifications - it changes how often your factory runs. Measured against the published package: on the **v1** lane the factory runs **once per test**, so one server instance serves every call. On the **v2** lane it runs **per request** (six times over a connect plus three tool calls), because that is how the SDK's `createMcpHandler` serves a stateless lifecycle.
+
+So a server holding state inside the factory passes on v1 and fails on v2, with tool calls that succeed but state that vanishes:
+
+```ts notype
+// Breaks on v2: a new `notes` array per request.
+export function createServer() {
+  const notes: string[] = [];
+  // ...registerTool("add_note", ...) pushes into notes
+}
+
+// Works on both: state outside the factory, reset between tests.
+const notes: string[] = [];
+export const reset = () => void (notes.length = 0);
+export function createServer() {
+  // ...registerTool("add_note", ...) pushes into the shared notes
+}
+```
+
+The harness is faithful here rather than convenient: a real stateless deployment instantiates per request too, so a suite that only passes on v1 is telling you something true about your server.
+
 | Lane  | `'2025-11-25'`                    | `'2026-07-28'`                      |
 | ----- | ---------------------------------- | -------------------------------------- |
 | v1    | the only revision it negotiates   | throws - the v1 SDK cannot serve it |
