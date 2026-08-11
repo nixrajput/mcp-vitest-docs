@@ -81,7 +81,7 @@ export function ReporterPane({
 
   return (
     <div
-      className="rounded-lg border border-t-2 border-(--line) bg-(--surface)"
+      className="card border-t-2 border-(--line)"
       style={{
         borderTopColor: ERA_COLOR[era],
         boxShadow: `inset 0 24px 32px -32px ${ERA_COLOR[era]}, 0 12px 24px -20px rgba(0, 0, 0, 0.4)`,

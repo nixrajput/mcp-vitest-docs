@@ -25,14 +25,14 @@ function isThrows(cell: string) {
 
 export function LifecycleMatrix() {
   return (
-    <section className="mx-auto max-w-3xl px-4 py-8">
+    <section className="mx-auto w-full max-w-(--site-width) border-t border-(--line) px-4 py-12">
       <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
         The matrix
       </p>
       <h2 className="mt-2 text-2xl font-bold tracking-tight">
         Every SDK major, every protocol revision
       </h2>
-      <div className="mt-6 overflow-x-auto rounded-lg border border-(--line)">
+      <div className="card mt-6 overflow-x-auto">
         <table className="w-full min-w-[420px] table-fixed text-left font-mono text-sm">
           <thead>
             <tr>
