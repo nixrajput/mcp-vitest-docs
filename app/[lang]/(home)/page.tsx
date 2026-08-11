@@ -19,7 +19,7 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
         <FeatureGrid />
       </Reveal>
       <Reveal>
-        <section className="mx-auto flex max-w-(--site-width) flex-col items-center gap-4 border-t border-(--line) px-4 py-8 text-center">
+        <section className="mx-auto flex w-full max-w-(--content-width) flex-col items-center gap-4 px-4 py-16 text-center">
           <p className="text-fd-muted-foreground text-sm">
             Same suite. Both SDK majors. Both protocol eras.
           </p>
