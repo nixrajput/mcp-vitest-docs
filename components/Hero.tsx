@@ -1,29 +1,27 @@
 import Link from "next/link";
 import { InstallCommand } from "./InstallCommand";
-import { ReporterPane } from "./ReporterPane";
 import { NPM_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
 export function Hero({ lang, version }: { lang: string; version: string }) {
   return (
-    <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-12 text-center sm:py-14">
-      <div className="flex flex-col items-center gap-4">
+    <section className="mx-auto flex w-full max-w-(--site-width) flex-col items-center gap-6 px-4 py-12 text-center sm:py-14">
+      <div className="enter flex max-w-(--site-measure) flex-col items-center gap-4">
         <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
           {SITE_TAGLINE}
         </h1>
         <p className="text-fd-muted-foreground text-lg">{SITE_DESCRIPTION}</p>
       </div>
 
-      <div aria-hidden className="hero-rule" />
+      <div
+        aria-hidden
+        className="enter hero-rule"
+        style={{ "--enter-delay": "80ms" } as React.CSSProperties}
+      />
 
-      <div className="w-full text-left">
-        <p className="mb-2 pl-1 font-mono text-xs text-(--muted)">test/completions.test.ts</p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <ReporterPane era="old" sdkLabel="SDK v1" revision="2025-11-25" startDelay={500} />
-          <ReporterPane era="now" sdkLabel="SDK v2" revision="2026-07-28" startDelay={650} />
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center gap-2">
+      <div
+        className="enter flex flex-col items-center gap-2"
+        style={{ "--enter-delay": "140ms" } as React.CSSProperties}
+      >
         <InstallCommand />
         <a
           href={`${NPM_URL}/v/${version}`}
@@ -32,7 +30,7 @@ export function Hero({ lang, version }: { lang: string; version: string }) {
           latest v{version} on npm
         </a>
       </div>
-      <div className="flex gap-3">
+      <div className="enter flex gap-3" style={{ "--enter-delay": "200ms" } as React.CSSProperties}>
         <Link
           href={`/${lang}/docs`}
           className="bg-fd-primary text-fd-primary-foreground rounded-lg px-6 py-3 font-medium shadow-sm transition-all duration-200 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--era-now) active:scale-[0.97]"

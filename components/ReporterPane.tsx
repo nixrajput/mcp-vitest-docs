@@ -80,13 +80,7 @@ export function ReporterPane({
   const allResolved = resolvedCount === checks.length;
 
   return (
-    <div
-      className="rounded-lg border border-t-2 border-(--line) bg-(--surface)"
-      style={{
-        borderTopColor: ERA_COLOR[era],
-        boxShadow: `inset 0 24px 32px -32px ${ERA_COLOR[era]}, 0 12px 24px -20px rgba(0, 0, 0, 0.4)`,
-      }}
-    >
+    <div className="card flex flex-col sm:row-span-3 sm:grid sm:grid-rows-subgrid">
       <div className="flex items-center justify-between gap-3 border-b border-(--line) px-3 py-2 font-mono text-xs">
         <span className="text-(--paper)">{sdkLabel}</span>
         <span style={{ color: ERA_COLOR[era] }}>{revision}</span>
