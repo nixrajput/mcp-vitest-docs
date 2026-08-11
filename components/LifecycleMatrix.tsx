@@ -33,50 +33,46 @@ export function LifecycleMatrix() {
         <h2 className="mt-2 text-2xl font-bold tracking-tight">
           Every SDK major, every protocol revision
         </h2>
-        <div className="card mt-6 overflow-x-auto">
-          <table className="w-full min-w-[420px] table-fixed text-left font-mono text-sm">
-            <thead>
-              <tr>
-                <th
-                  scope="col"
-                  className="w-20 border-b-2 border-(--line) px-3 py-2 font-medium text-(--muted)"
-                >
-                  Lane
-                </th>
-                <th
-                  scope="col"
-                  className="border-b-2 border-(--era-old) px-3 py-2 font-medium text-(--era-old)"
-                >
-                  2025-11-25
-                </th>
-                <th
-                  scope="col"
-                  className="border-b-2 border-(--era-now) px-3 py-2 font-medium text-(--era-now)"
-                >
-                  2026-07-28
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {ROWS.map((row) => (
-                <tr key={row.lane} className="border-b border-(--line) last:border-0">
-                  <th scope="row" className="px-3 py-2 text-left font-semibold text-(--paper)">
-                    {row.lane}
+        <div className="card mt-6 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[520px] table-fixed text-left font-mono text-sm">
+              <thead className="bg-fd-muted/60">
+                <tr className="border-b border-(--line)">
+                  <th scope="col" className="w-[14%] px-4 py-3 font-medium text-(--muted)">
+                    Lane
                   </th>
-                  <td
-                    className={`px-3 py-2 text-(--muted) ${isThrows(row.old) ? "italic opacity-80" : ""}`}
-                  >
-                    {row.old}
-                  </td>
-                  <td
-                    className={`px-3 py-2 text-(--muted) ${isThrows(row.now) ? "italic opacity-80" : ""}`}
-                  >
-                    {row.now}
-                  </td>
+                  <th scope="col" className="w-[43%] px-4 py-3 font-medium text-(--era-old)">
+                    2025-11-25
+                  </th>
+                  <th scope="col" className="w-[43%] px-4 py-3 font-medium text-(--era-now)">
+                    2026-07-28
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {ROWS.map((row) => (
+                  <tr
+                    key={row.lane}
+                    className="hover:bg-fd-muted/40 border-b border-(--line) transition-colors last:border-0"
+                  >
+                    <th scope="row" className="px-4 py-3 text-left font-semibold text-(--paper)">
+                      {row.lane}
+                    </th>
+                    <td
+                      className={`px-4 py-3 ${isThrows(row.old) ? "text-(--muted) italic" : "text-(--paper)"}`}
+                    >
+                      {row.old}
+                    </td>
+                    <td
+                      className={`px-4 py-3 ${isThrows(row.now) ? "text-(--muted) italic" : "text-(--paper)"}`}
+                    >
+                      {row.now}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
