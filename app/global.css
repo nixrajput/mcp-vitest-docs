@@ -211,6 +211,7 @@ html > body[data-scroll-locked] {
 
 /* The header and the section bar both stick, so an anchor jump would land the heading behind
    them. Matches STICKY_OFFSET in SectionNav.tsx, which decides the same line for highlighting. */
+#overview,
 #run,
 #lifecycles,
 #coverage,

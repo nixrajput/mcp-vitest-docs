@@ -5,7 +5,7 @@ export function ReporterDemo() {
     <section id="run" className="w-full px-4 py-16 sm:py-20">
       <div className="mx-auto w-full max-w-(--content-width)">
         <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
-          The run
+          Test output
         </p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight">One suite, both protocol eras</h2>
         <p className="text-fd-muted-foreground mt-2 text-sm">
