@@ -12,6 +12,10 @@ const FEATURES = [
     body: "Answer a server's sampling, elicitation, and roots requests from your test.",
   },
   {
+    title: "Notifications and progress",
+    body: "Collect what a server pushes, or await one by method. Progress and cancellation per call.",
+  },
+  {
     title: "Typed matchers",
     body: "Seven of them, with TypeScript augmentation and did-you-mean suggestions.",
   },
