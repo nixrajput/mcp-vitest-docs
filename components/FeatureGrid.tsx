@@ -20,6 +20,10 @@ const FEATURES = [
     body: "Spawn one over stdio or point at a running URL. Everything else works unchanged.",
   },
   {
+    title: "OAuth testing",
+    body: "Send bearer credentials to a URL server, or drive the other side with a fake authorization server.",
+  },
+  {
     title: "Regression safety",
     body: "Snapshot manifests normalized so key order and absent optionals never churn them.",
   },
