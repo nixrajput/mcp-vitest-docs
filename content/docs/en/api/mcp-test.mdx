@@ -16,6 +16,7 @@ const mcp = await mcpTest(() => createServer());
 | ------------------ | ------------------- | ------------------------------------------------------------------------------ |
 | `autoClose`       | `true`              | Close the harness via vitest's `onTestFinished` when inside a test.           |
 | `protocolVersion` | `'2026-07-28'` (v2) | Hold the connection to one protocol revision - see [lifecycles](/en/docs/api/lifecycles). |
+| `auth`            | -                    | Send bearer credentials to a URL-connected server - see [testing OAuth-protected servers](/en/docs/api/auth). Throws on a stdio or in-process server, which cannot send one. |
 
 With `autoClose: false` you own the lifetime and call `mcp.close()` yourself. Outside a vitest test context, auto-close is skipped and closing is always yours.
 

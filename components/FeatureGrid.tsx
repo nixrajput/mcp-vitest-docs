@@ -12,12 +12,20 @@ const FEATURES = [
     body: "Answer a server's sampling, elicitation, and roots requests from your test.",
   },
   {
+    title: "Notifications and progress",
+    body: "Collect what a server pushes, or await one by method. Progress and cancellation per call.",
+  },
+  {
     title: "Typed matchers",
     body: "Seven of them, with TypeScript augmentation and did-you-mean suggestions.",
   },
   {
     title: "External servers",
     body: "Spawn one over stdio or point at a running URL. Everything else works unchanged.",
+  },
+  {
+    title: "OAuth testing",
+    body: "Send bearer credentials to a URL server, or drive the other side with a fake authorization server.",
   },
   {
     title: "Regression safety",
@@ -27,9 +35,8 @@ const FEATURES = [
 
 export function FeatureGrid() {
   return (
-    /* The one muted band on the page: it separates this block from the sections around it, which is
-       what the rules between sections were doing less quietly. */
-    <section className="bg-fd-muted w-full px-4 py-16 sm:py-20">
+    /* Its band comes from the alternating rule in global.css, with the other sections. */
+    <section id="coverage" className="w-full px-4 py-16 sm:py-20">
       <div className="mx-auto w-full max-w-(--content-width)">
         <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
           Coverage

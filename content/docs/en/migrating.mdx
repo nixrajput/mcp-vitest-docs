@@ -1,9 +1,33 @@
 ---
-title: Migrating from 0.2
-description: What changed between mcp-vitest 0.2 and 0.3, and how to keep the old behavior if it bites.
+title: Migrating
+description: What changed release to release, and how to keep the old behavior if it bites.
 ---
 
-Everything from 0.2 keeps working. Three changes alter what your server sees, so they are worth a look if a suite starts behaving differently.
+Each section below covers one upgrade. Everything not listed keeps working as before.
+
+## 0.5.0 to 0.5.1
+
+A patch, but one behavior change can surface as a new failure, and it does so on purpose.
+
+| Change                                                                | Effect                                                                                                                                                                          | If it bites                                                                                                          |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **`auth` throws on a stdio or in-process server.**                    | It previously connected and sent no credential, so a suite passed while exercising no authorization at all. Only the URL transport can carry one.                                | Drop the `auth` option for that lane, or point the test at a URL server if the credential is what you meant to test. |
+| **The `fakeAuthServer` verifier checks `iss` and `nbf`, and `aud` when `audience` is set.** | A token claiming a foreign issuer, or one that is not yet valid, is now refused. Cross-issuer rejection previously only appeared to work, because each instance mints its own keypair. | Mint tokens through the instance under test rather than hand-rolling claims that contradict it.                       |
+
+Nothing else requires a change. [`fakeAuthServer({ audience })`](/en/docs/api/auth) is opt-in, so audience enforcement is off unless you ask for it, and the manifest helpers now return typed values where they previously returned `unknown` - which removes casts rather than adding them.
+
+## 0.4 to 0.5
+
+Two changes narrow what compiles. Neither changes behavior for code that already typechecked.
+
+| Change                                                                    | Effect                                                                                                                                                                                                          | If it bites                                                                                                                       |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **`McpServerInput` no longer includes a bare `unknown`.**                 | `unknown` inside a union absorbs the whole union, so `mcpTest()` previously typechecked against literally any argument at all, with no compile error for a wrong type.                                        | If the value really is one of those shapes but arrives typed loosely, narrow it first. If it is not one of them, the new error is correct and casting past it only moves the failure to runtime. |
+| **`McpHarness`'s constructor is now marked `@internal`.**                 | Affects code that constructs `McpHarness` directly instead of going through `mcpTest()` or `createMcpTest()`. The tag is a support signal, not a compile-time restriction - the constructor is still in the published types and `new McpHarness(...)` still builds - but it is no longer a supported entry point, and `RawConnection` and `DoubleRegistry` may change shape without a major version bump. | Nothing breaks today. Move to `mcpTest()` or `createMcpTest()` before those types shift under you. |
+
+## 0.2 to 0.3
+
+Three changes alter what your server sees, so they are worth a look if a suite starts behaving differently.
 
 | Change                                                                                                                                                                                | Effect                                                                                                                                                             | If it bites                                                                                    |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |

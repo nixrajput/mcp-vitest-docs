@@ -20,7 +20,7 @@ const mcp = await mcpTest({
 });
 ```
 
-The child process is terminated when the harness closes, which the fixture does for you. `headers` are merged into every request, which is the seam for auth-protected servers.
+The child process is terminated when the harness closes, which the fixture does for you. `headers` are merged into every request; for bearer tokens, the dedicated [`auth`](/en/docs/api/auth) option covers the common case with less boilerplate and wins over a same-named header here.
 
 Two things that surprise people:
 

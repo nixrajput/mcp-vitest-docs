@@ -1,0 +1,134 @@
+---
+title: Testing OAuth-protected servers
+description: Send bearer credentials with mcpTest, and drive both sides of the OAuth handshake with a fake authorization server.
+---
+
+Some MCP servers require a bearer token on every request. `mcp-vitest/auth` covers both sides of that: the `auth` option for sending credentials, and a fake authorization server plus assertions for exercising the RFC 9728 discovery flow end to end. It lives behind a subpath, so `import "mcp-vitest"` still pulls in zero Node builtins.
+
+## Sending credentials
+
+`auth` is accepted wherever `mcpTest` and `createMcpTest` take options. `{ token }` becomes an `Authorization: Bearer <token>` header; `{ headers }` is merged into the request verbatim:
+
+```ts fragment
+const withToken = await mcpTest(
+  { url: "https://example.com/mcp" },
+  { auth: { token: "test-token" } },
+);
+
+const withHeaders = await mcpTest(
+  { url: "https://example.com/mcp" },
+  { auth: { headers: { authorization: "Bearer test-token", "x-tenant": "acme" } } },
+);
+```
+
+`auth` wins over a [`UrlServerSpec`](/en/docs/api/external-servers)'s own `headers`, case-insensitively - a `token` set here always overrides a same-named header on the spec rather than merging with it.
+
+Only the URL transport puts credentials on the wire, so `auth` throws on a stdio or in-process server rather than connecting without one. A silent no-op there looks exactly like working auth.
+
+An invalid header value is refused without quoting the value, since a vitest failure report goes to CI logs and the value in question is usually the credential.
+
+## `fakeAuthServer(options?)`
+
+Spins up a real HTTP authorization server backed by its own RS256 keypair - no mocked fetch, no stubbed JWKS. Its `verifier` drops straight into the v2 SDK's `requireBearerAuth`, so your own server's auth wiring is exercised unchanged:
+
+```ts
+import { fakeAuthServer } from "mcp-vitest/auth";
+import { mcpTest, serveHandler } from "mcp-vitest";
+import { createMcpHandler, requireBearerAuth } from "@modelcontextprotocol/server";
+import { createServer } from "./server.js";
+
+const as = await fakeAuthServer();
+const handler = createMcpHandler(() => createServer());
+const served = await serveHandler({
+  async fetch(req) {
+    const authResult = await requireBearerAuth({ verifier: as.verifier })(req);
+    if (authResult instanceof Response) return authResult;
+    return handler.fetch(req, { authInfo: authResult });
+  },
+});
+
+const mcp = await mcpTest(
+  { url: `${served.url}/mcp` },
+  { auth: { token: as.mintToken() } },
+);
+// ...
+await served.close();
+await as.close();
+```
+
+| Member                         | Returns                                                        |
+| ------------------------------- | ---------------------------------------------------------------- |
+| `issuer`                       | the server's own base URL                                     |
+| `jwksUrl`                      | its JWKS endpoint                                              |
+| `verifier`                     | an `OAuthTokenVerifier` for the v2 SDK's `requireBearerAuth`   |
+| `mintToken(claims?)`           | a signed token, with `iss` and expiry set for you              |
+| `clientCredentials(clientId?)` | exchanges a `client_credentials` grant for a token, over real HTTP |
+| `close()`                      | stops the server, and is safe to call twice                     |
+
+Two instances never trust each other's tokens - each mints its own keypair, so a token from one fails the other's `verifier`.
+
+### Options
+
+| Option        | Effect                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| `audience`    | The resource identifier this server mints for. Set it and the verifier refuses every other audience, including a token carrying none. |
+| `issuerPath`  | Scopes the issuer to a path, e.g. `/tenant1`, for testing a multi-tenant authorization server. |
+
+### What the verifier checks
+
+The signature against this instance's key, `exp`, `nbf` when present, and that `iss` is this issuer. When `audience` is set it also requires the token's `aud` to match.
+
+A URL-shaped `aud` is reported as `AuthInfo.resource` whether or not `audience` is set. That matters because **`requireBearerAuth` validates neither the audience nor the issuer** - it checks the token's scopes and expiry and nothing else - so a server enforcing RFC 8707 has to read `resource` itself, and a server that forgets to would otherwise keep a green suite. Set `audience` to write the test that catches it:
+
+```ts
+import { expect, test } from "vitest";
+import { fakeAuthServer } from "mcp-vitest/auth";
+
+test("a token minted for another resource is refused", async () => {
+  const as = await fakeAuthServer({ audience: "https://api.example.com/mcp" });
+  try {
+    const mine = as.mintToken({ aud: "https://api.example.com/mcp" });
+    const theirs = as.mintToken({ aud: "https://other.example/mcp" });
+
+    const info = await as.verifier.verifyAccessToken(mine);
+    expect(info.resource?.toString()).toBe("https://api.example.com/mcp");
+
+    await expect(as.verifier.verifyAccessToken(theirs)).rejects.toThrow(/audience/);
+  } finally {
+    await as.close();
+  }
+});
+```
+
+An `aud` array matches on any member, as JWT allows, and a token carrying no audience at all is refused once `audience` is set.
+
+`mintToken` accepts an `aud` claim, and the token endpoint honors a `resource` parameter per RFC 8707, so a token minted through the real `client_credentials` exchange carries the audience it asked for.
+
+## Asserting the client side
+
+`expectAuthChallenge`, `fetchPrm`, and `hostClientMetadata` cover the discovery flow a real client walks before it has a token:
+
+```ts
+import { expectAuthChallenge, fetchPrm, hostClientMetadata } from "mcp-vitest/auth";
+
+// asserts a 401 + WWW-Authenticate, and surfaces the PRM url it names
+const challenge = await expectAuthChallenge("https://example.com/mcp");
+
+// fetches the Protected Resource Metadata document and checks its RFC 9728 shape
+const prm = await fetchPrm(challenge.prmUrl!);
+console.log(prm.authorization_servers);
+
+// serves a Client ID Metadata Document at a dereferenceable URL, for CIMD-based clients
+const cimd = await hostClientMetadata({
+  client_name: "my tests",
+  redirect_uris: ["http://127.0.0.1:0/callback"],
+});
+// ...
+await cimd.close();
+```
+
+`expectAuthChallenge` throws if the endpoint does not answer with a 401, so it doubles as an assertion that a server is actually protected. `fetchPrm` throws if the document is missing `resource` or `authorization_servers`, the two fields RFC 9728 requires.
+
+## Lower-level JWT helpers
+
+`generateAuthKeys`, `signJwt`, and `decodeJwt` are what `fakeAuthServer` is built on: an RSA keypair, an RS256 signer, and a decoder that does not verify. They are exported for tests that need a token from outside a `fakeAuthServer` instance - most tests should reach for `mintToken` instead.

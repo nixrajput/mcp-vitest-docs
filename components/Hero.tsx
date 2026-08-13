@@ -4,7 +4,10 @@ import { NPM_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/shared";
 
 export function Hero({ lang, version }: { lang: string; version: string }) {
   return (
-    <section className="mx-auto flex w-full max-w-(--site-width) flex-col items-center gap-6 px-4 py-12 text-center sm:py-14">
+    <section
+      id="overview"
+      className="mx-auto flex w-full max-w-(--site-width) flex-col items-center gap-6 px-4 py-12 text-center sm:py-14"
+    >
       <div className="enter flex max-w-(--site-measure) flex-col items-center gap-4">
         <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
           {SITE_TAGLINE}
