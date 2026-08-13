@@ -78,7 +78,29 @@ Two instances never trust each other's tokens - each mints its own keypair, so a
 
 The signature against this instance's key, `exp`, `nbf` when present, and that `iss` is this issuer. When `audience` is set it also requires the token's `aud` to match.
 
-A URL-shaped `aud` is reported as `AuthInfo.resource` whether or not `audience` is set. That matters because **`requireBearerAuth` validates neither the audience nor the issuer** - it checks the token's scopes and expiry and nothing else - so a server enforcing RFC 8707 has to read `resource` itself, and a server that forgets to would otherwise keep a green suite. Set `audience` to write the test that catches it.
+A URL-shaped `aud` is reported as `AuthInfo.resource` whether or not `audience` is set. That matters because **`requireBearerAuth` validates neither the audience nor the issuer** - it checks the token's scopes and expiry and nothing else - so a server enforcing RFC 8707 has to read `resource` itself, and a server that forgets to would otherwise keep a green suite. Set `audience` to write the test that catches it:
+
+```ts
+import { expect, test } from "vitest";
+import { fakeAuthServer } from "mcp-vitest/auth";
+
+test("a token minted for another resource is refused", async () => {
+  const as = await fakeAuthServer({ audience: "https://api.example.com/mcp" });
+  try {
+    const mine = as.mintToken({ aud: "https://api.example.com/mcp" });
+    const theirs = as.mintToken({ aud: "https://other.example/mcp" });
+
+    const info = await as.verifier.verifyAccessToken(mine);
+    expect(info.resource?.toString()).toBe("https://api.example.com/mcp");
+
+    await expect(as.verifier.verifyAccessToken(theirs)).rejects.toThrow(/audience/);
+  } finally {
+    await as.close();
+  }
+});
+```
+
+An `aud` array matches on any member, as JWT allows, and a token carrying no audience at all is refused once `audience` is set.
 
 `mintToken` accepts an `aud` claim, and the token endpoint honors a `resource` parameter per RFC 8707, so a token minted through the real `client_credentials` exchange carries the audience it asked for.
 
