@@ -26,16 +26,24 @@ export function SectionNav() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      // Last section whose top has passed the sticky line, so exactly one is always current -
-      // an intersection band leaves nothing selected whenever no section is inside it.
+      // Whichever section fills most of the reading area, which is what a reader would call the
+      // one they are in. Tracking the top edge instead lags badly: these sections carry ~80px of
+      // padding, so the next one fills the screen long before its edge reaches the sticky line.
       let current = found[0][0];
+      let widest = 0;
+      let lastPassed = "";
       for (const [id, el] of found) {
-        if (el.getBoundingClientRect().top <= STICKY_OFFSET) current = id;
+        const box = el.getBoundingClientRect();
+        if (box.top <= STICKY_OFFSET) lastPassed = id;
+        const visible = Math.min(box.bottom, window.innerHeight) - Math.max(box.top, STICKY_OFFSET);
+        if (visible > widest) {
+          widest = visible;
+          current = id;
+        }
       }
-      // The final section can be too short to reach the line, so it would never light up.
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-        current = found[found.length - 1][0];
-      }
+      // Down in the footer every section sits above the fold, so none has any visible area and
+      // the reader would otherwise be thrown back to the first one.
+      if (widest <= 0 && lastPassed) current = lastPassed;
       setActive(current);
     };
 
