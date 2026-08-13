@@ -1,17 +1,13 @@
 import { getProjectStats } from "@/lib/stats";
 
-// Verified by running the suite in the package repo; there is no API for a test count,
-// so unlike the other stats here this one is a checked constant, not a live fetch.
-const SUITE_TESTS = 157;
-
 export async function ProjectStats() {
   const stats = await getProjectStats();
 
   // Every live cell is gated on a nonzero value, not merely a present one: a "0" in display
   // type is dead weight, and each cell appears on its own once its number means something.
-  const cells: { label: string; value: string }[] = [
-    { label: "tests in the suite", value: String(SUITE_TESTS) },
-  ];
+  const cells: { label: string; value: string }[] = [];
+  if (stats.suiteTests)
+    cells.push({ label: "tests in the suite", value: String(stats.suiteTests) });
   if (stats.totalDownloads) {
     cells.push({ label: "downloads all-time", value: stats.totalDownloads.toLocaleString() });
   }

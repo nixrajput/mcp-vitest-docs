@@ -14,6 +14,7 @@ export interface Contributor {
 }
 
 export interface ProjectStats {
+  suiteTests?: number;
   totalDownloads?: number;
   stars?: number;
   forks?: number;
@@ -23,6 +24,25 @@ export interface ProjectStats {
 // The route is server-rendered, so a hung upstream would hold the response open rather than
 // merely lose a number. A missed deadline degrades to an omitted stat like any other failure.
 const REQUEST_TIMEOUT_MS = 4000;
+
+/**
+ * The suite size, read from the package README's claim row rather than copied here. That row is
+ * the single home for the project's counts and ships with every release, so this cannot drift;
+ * a hardcoded copy went stale three times in one afternoon.
+ */
+async function fetchSuiteTests(): Promise<number | undefined> {
+  try {
+    const res = await fetch(`https://raw.githubusercontent.com/${REPO}/main/README.md`, {
+      next: { revalidate: REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    if (!res.ok) return undefined;
+    const match = /<strong>(\d+) tests<\/strong>/.exec(await res.text());
+    return match ? Number(match[1]) : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 async function fetchJson(url: string): Promise<unknown> {
   try {
@@ -44,13 +64,15 @@ async function fetchJson(url: string): Promise<unknown> {
  */
 export async function getProjectStats(): Promise<ProjectStats> {
   const today = new Date().toISOString().slice(0, 10);
-  const [downloads, repo, contributors] = await Promise.all([
+  const [downloads, repo, contributors, suiteTests] = await Promise.all([
     fetchJson(`https://api.npmjs.org/downloads/range/${FIRST_PUBLISH}:${today}/mcp-vitest`),
     fetchJson(`https://api.github.com/repos/${REPO}`),
     fetchJson(`https://api.github.com/repos/${REPO}/contributors`),
+    fetchSuiteTests(),
   ]);
 
   const stats: ProjectStats = {};
+  if (suiteTests !== undefined) stats.suiteTests = suiteTests;
 
   const days = (downloads as { downloads?: { downloads: number }[] } | undefined)?.downloads;
   if (Array.isArray(days)) {
