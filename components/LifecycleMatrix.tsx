@@ -25,7 +25,7 @@ function isThrows(cell: string) {
 
 export function LifecycleMatrix() {
   return (
-    <section className="w-full px-4 py-16 sm:py-20">
+    <section id="lifecycles" className="w-full px-4 py-16 sm:py-20">
       <div className="mx-auto w-full max-w-(--content-width)">
         <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
           The matrix

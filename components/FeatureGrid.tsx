@@ -37,7 +37,7 @@ export function FeatureGrid() {
   return (
     /* The one muted band on the page: it separates this block from the sections around it, which is
        what the rules between sections were doing less quietly. */
-    <section className="bg-fd-muted w-full px-4 py-16 sm:py-20">
+    <section id="coverage" className="bg-fd-muted w-full px-4 py-16 sm:py-20">
       <div className="mx-auto w-full max-w-(--content-width)">
         <p className="font-display text-xs font-semibold tracking-[0.2em] text-(--muted) uppercase">
           Coverage
