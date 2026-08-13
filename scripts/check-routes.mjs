@@ -61,7 +61,7 @@ console.log("PASS: docs skeleton pages render");
 
 const API_PAGES = [
   "mcp-test", "harness", "matchers", "doubles",
-  "notifications", "snapshots", "external-servers", "lifecycles",
+  "notifications", "snapshots", "external-servers", "auth", "lifecycles",
 ];
 for (const slug of API_PAGES) {
   const r = await fetch(`${base}/en/docs/api/${slug}`);
