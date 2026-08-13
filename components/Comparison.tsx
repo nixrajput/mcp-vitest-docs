@@ -15,11 +15,15 @@ const ROWS: {
   name: string;
   href?: string;
   lead?: boolean;
+  /** Columns where THIS tool is ahead of the others. One marker serves both directions, so a
+      row we lose reads the same as a row we win rather than being coded as a defeat. */
+  leads?: CellKey[];
   cells: Record<CellKey, string>;
 }[] = [
   {
     name: "mcp-vitest",
     lead: true,
+    leads: ["sdk", "protocol", "doubles", "snapshots", "schema", "notifications"],
     cells: {
       sdk: "v1 and v2, auto-detected",
       protocol: "2025-11-25 and 2026-07-28",
@@ -48,6 +52,9 @@ const ROWS: {
   {
     name: "MCP Inspector",
     href: "https://github.com/modelcontextprotocol/inspector",
+    // Verified in src/auth/fake-as.ts: our /token rejects every grant but client_credentials,
+    // so Inspector's real authorization-code flow is genuinely ahead of us here.
+    leads: ["oauth"],
     cells: {
       sdk: "Interactive tool, not a test harness",
       protocol: "-",
@@ -89,6 +96,13 @@ export function Comparison() {
           Alternatives
         </p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight">Compared to the alternatives</h2>
+        <p className="text-fd-muted-foreground mt-3 flex items-center gap-2 text-sm">
+          <span
+            aria-hidden="true"
+            className="inline-block size-1.5 rounded-full bg-(--era-now) align-middle"
+          />
+          marks the tool ahead on that row, whichever tool it is
+        </p>
         <div className="card mt-6 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1280px] table-auto text-left text-sm">
@@ -124,14 +138,30 @@ export function Comparison() {
                         row.name
                       )}
                     </th>
-                    {COLUMNS.map((c) => (
-                      <td
-                        key={c.key}
-                        className={`px-4 py-3 ${isAbsent(row.cells[c.key]) ? "text-(--muted)" : "text-fd-muted-foreground"}`}
-                      >
-                        {row.cells[c.key]}
-                      </td>
-                    ))}
+                    {COLUMNS.map((c) => {
+                      const leads = row.leads?.includes(c.key) ?? false;
+                      return (
+                        <td
+                          key={c.key}
+                          className={`px-4 py-3 ${
+                            leads
+                              ? "text-fd-foreground font-medium"
+                              : isAbsent(row.cells[c.key])
+                                ? "text-(--muted)"
+                                : "text-fd-muted-foreground"
+                          }`}
+                        >
+                          {leads && (
+                            <span
+                              aria-hidden="true"
+                              className="mr-1.5 inline-block size-1.5 rounded-full bg-(--era-now) align-middle"
+                            />
+                          )}
+                          {leads && <span className="sr-only">Leads: </span>}
+                          {row.cells[c.key]}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

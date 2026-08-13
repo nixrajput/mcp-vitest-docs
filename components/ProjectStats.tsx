@@ -4,30 +4,19 @@ import { getProjectStats } from "@/lib/stats";
 // so unlike the other stats here this one is a checked constant, not a live fetch.
 const SUITE_TESTS = 145;
 
-function daysSince(iso: string): number {
-  return Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000));
-}
-
 export async function ProjectStats() {
   const stats = await getProjectStats();
 
-  const cells: { label: string; value: string }[] = [];
-  if (stats.createdAt) {
-    cells.push({ label: "days since first publish", value: String(daysSince(stats.createdAt)) });
-  }
-  if (stats.releaseCount !== undefined) {
-    cells.push({ label: "npm releases", value: String(stats.releaseCount) });
-  }
-  cells.push({ label: "tests in the suite", value: String(SUITE_TESTS) });
-  if (stats.totalDownloads !== undefined) {
+  // Every live cell is gated on a nonzero value, not merely a present one: a "0" in display
+  // type is dead weight, and each cell appears on its own once its number means something.
+  const cells: { label: string; value: string }[] = [
+    { label: "tests in the suite", value: String(SUITE_TESTS) },
+  ];
+  if (stats.totalDownloads) {
     cells.push({ label: "downloads all-time", value: stats.totalDownloads.toLocaleString() });
   }
-  if (stats.stars !== undefined) {
-    cells.push({ label: "GitHub stars", value: String(stats.stars) });
-  }
-  if (stats.forks !== undefined) {
-    cells.push({ label: "forks", value: String(stats.forks) });
-  }
+  if (stats.stars) cells.push({ label: "GitHub stars", value: String(stats.stars) });
+  if (stats.forks) cells.push({ label: "forks", value: String(stats.forks) });
 
   return (
     <section id="project" className="w-full px-4 py-16 sm:py-20">
@@ -36,7 +25,10 @@ export async function ProjectStats() {
           The project
         </p>
         <h2 className="mt-2 text-2xl font-bold tracking-tight">By the numbers</h2>
-        <dl className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        {/* auto-fit, not a fixed column count: the cells are gated on live values, so the count
+            varies. It collapses empty tracks so few cards still fill the row, and unlike flex-1
+            a lone card wrapping onto a second row keeps its track width instead of stretching. */}
+        <dl className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-4">
           {cells.map((cell) => (
             <div key={cell.label} className="card flex flex-col gap-1 p-5">
               <dt className="font-display text-3xl font-bold tracking-tight">{cell.value}</dt>
