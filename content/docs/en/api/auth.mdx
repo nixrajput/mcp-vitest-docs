@@ -23,6 +23,10 @@ const withHeaders = await mcpTest(
 
 `auth` wins over a [`UrlServerSpec`](/en/docs/api/external-servers)'s own `headers`, case-insensitively - a `token` set here always overrides a same-named header on the spec rather than merging with it.
 
+Only the URL transport puts credentials on the wire, so `auth` throws on a stdio or in-process server rather than connecting without one. A silent no-op there looks exactly like working auth.
+
+An invalid header value is refused without quoting the value, since a vitest failure report goes to CI logs and the value in question is usually the credential.
+
 ## `fakeAuthServer(options?)`
 
 Spins up a real HTTP authorization server backed by its own RS256 keypair - no mocked fetch, no stubbed JWKS. Its `verifier` drops straight into the v2 SDK's `requireBearerAuth`, so your own server's auth wiring is exercised unchanged:
@@ -59,9 +63,24 @@ await as.close();
 | `verifier`                     | an `OAuthTokenVerifier` for the v2 SDK's `requireBearerAuth`   |
 | `mintToken(claims?)`           | a signed token, with `iss` and expiry set for you              |
 | `clientCredentials(clientId?)` | exchanges a `client_credentials` grant for a token, over real HTTP |
-| `close()`                      | stops the server                                                |
+| `close()`                      | stops the server, and is safe to call twice                     |
 
-Two instances never trust each other's tokens - each mints its own keypair, so a token from one fails the other's `verifier`. `mintToken` accepts an `aud` claim for servers that check it, and the token endpoint honors a `resource` parameter per RFC 8707.
+Two instances never trust each other's tokens - each mints its own keypair, so a token from one fails the other's `verifier`.
+
+### Options
+
+| Option        | Effect                                                                                     |
+| ------------- | ------------------------------------------------------------------------------------------ |
+| `audience`    | The resource identifier this server mints for. Set it and the verifier refuses every other audience, including a token carrying none. |
+| `issuerPath`  | Scopes the issuer to a path, e.g. `/tenant1`, for testing a multi-tenant authorization server. |
+
+### What the verifier checks
+
+The signature against this instance's key, `exp`, `nbf` when present, and that `iss` is this issuer. When `audience` is set it also requires the token's `aud` to match.
+
+A URL-shaped `aud` is reported as `AuthInfo.resource` whether or not `audience` is set. That matters because **`requireBearerAuth` validates neither the audience nor the issuer** - it checks the token's scopes and expiry and nothing else - so a server enforcing RFC 8707 has to read `resource` itself, and a server that forgets to would otherwise keep a green suite. Set `audience` to write the test that catches it.
+
+`mintToken` accepts an `aud` claim, and the token endpoint honors a `resource` parameter per RFC 8707, so a token minted through the real `client_credentials` exchange carries the audience it asked for.
 
 ## Asserting the client side
 

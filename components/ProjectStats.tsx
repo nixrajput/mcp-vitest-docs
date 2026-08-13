@@ -2,7 +2,7 @@ import { getProjectStats } from "@/lib/stats";
 
 // Verified by running the suite in the package repo; there is no API for a test count,
 // so unlike the other stats here this one is a checked constant, not a live fetch.
-const SUITE_TESTS = 145;
+const SUITE_TESTS = 157;
 
 export async function ProjectStats() {
   const stats = await getProjectStats();

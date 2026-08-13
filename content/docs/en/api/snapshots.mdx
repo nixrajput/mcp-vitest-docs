@@ -27,6 +27,8 @@ test("capabilities are unchanged", async ({ mcp }) => {
 
 `toolManifest`, `resourceManifest`, `promptManifest`, and `capabilitiesManifest` are available from `mcp-vitest/snapshot` or the package root.
 
+Each returns its entries typed rather than as `unknown`, so a manifest can be asserted on directly - `(await toolManifest(mcp)).map((t) => t.name)` needs no cast.
+
 ## Structured output
 
 `toMatchOutputSchema()` validates a result's `structuredContent` against the schema the tool declared in `tools/list`. Pass a JSON Schema explicitly to validate against something else.
