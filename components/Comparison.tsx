@@ -103,30 +103,66 @@ export function Comparison() {
           />
           marks the tool ahead on that row, whichever tool it is
         </p>
-        <div className="card mt-6 overflow-hidden">
+        {/* One card per tool below md. Five columns on a phone leaves about 60px each, and a
+            min-width wide enough to fix that made the page itself scroll sideways. */}
+        <div className="mt-6 grid gap-4 md:hidden">
+          {ROWS.map((row) => (
+            <div key={row.name} className="card p-5">
+              <p className={`font-semibold ${row.lead ? "text-(--era-now)" : "text-(--paper)"}`}>
+                {row.href ? (
+                  <a href={row.href} className="hover:underline">
+                    {row.name}
+                  </a>
+                ) : (
+                  row.name
+                )}
+              </p>
+              <dl className="mt-3 grid gap-2 text-sm">
+                {COLUMNS.map((c) => {
+                  const leads = row.leads?.includes(c.key) ?? false;
+                  return (
+                    <div key={c.key} className="grid grid-cols-[9rem_1fr] gap-3">
+                      <dt className="text-(--muted)">{c.label}</dt>
+                      <dd
+                        className={
+                          leads
+                            ? "text-fd-foreground font-medium"
+                            : isAbsent(row.cells[c.key])
+                              ? "text-(--muted)"
+                              : "text-fd-muted-foreground"
+                        }
+                      >
+                        {leads && (
+                          <span
+                            aria-hidden="true"
+                            className="mr-1.5 inline-block size-1.5 rounded-full bg-(--era-now) align-middle"
+                          />
+                        )}
+                        {row.cells[c.key]}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </dl>
+            </div>
+          ))}
+        </div>
+
+        {/* Capabilities down the side, tools across the top. The other way round meant nine
+            columns sharing the width, so every sentence wrapped into a narrow ribbon. */}
+        <div className="card mt-6 hidden overflow-hidden md:block">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1280px] table-auto text-left text-sm">
+            <table className="w-full min-w-[56rem] table-fixed text-left text-sm">
               <thead className="bg-fd-muted/60">
                 <tr className="border-b border-(--line)">
-                  <th scope="col" className="px-4 py-3 font-medium text-(--muted)">
-                    Tool
+                  <th scope="col" className="w-[13%] px-5 py-4 font-medium text-(--muted)">
+                    Capability
                   </th>
-                  {COLUMNS.map((c) => (
-                    <th key={c.key} scope="col" className="px-4 py-3 font-medium text-(--muted)">
-                      {c.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ROWS.map((row) => (
-                  <tr
-                    key={row.name}
-                    className="hover:bg-fd-muted/40 border-b border-(--line) transition-colors last:border-0"
-                  >
+                  {ROWS.map((row) => (
                     <th
-                      scope="row"
-                      className={`px-4 py-3 text-left font-semibold whitespace-nowrap ${
+                      key={row.name}
+                      scope="col"
+                      className={`px-5 py-4 font-semibold ${
                         row.lead ? "text-(--era-now)" : "text-(--paper)"
                       }`}
                     >
@@ -138,15 +174,31 @@ export function Comparison() {
                         row.name
                       )}
                     </th>
-                    {COLUMNS.map((c) => {
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {COLUMNS.map((c) => (
+                  <tr
+                    key={c.key}
+                    className="hover:bg-fd-muted/40 border-b border-(--line) transition-colors last:border-0"
+                  >
+                    <th
+                      scope="row"
+                      className="px-5 py-4 text-left align-top font-medium text-(--paper)"
+                    >
+                      {c.label}
+                    </th>
+                    {ROWS.map((row) => {
                       const leads = row.leads?.includes(c.key) ?? false;
+                      const cell = row.cells[c.key];
                       return (
                         <td
-                          key={c.key}
-                          className={`px-4 py-3 ${
+                          key={row.name}
+                          className={`px-5 py-4 align-top leading-relaxed ${
                             leads
                               ? "text-fd-foreground font-medium"
-                              : isAbsent(row.cells[c.key])
+                              : isAbsent(cell)
                                 ? "text-(--muted)"
                                 : "text-fd-muted-foreground"
                           }`}
@@ -158,7 +210,7 @@ export function Comparison() {
                             />
                           )}
                           {leads && <span className="sr-only">Leads: </span>}
-                          {row.cells[c.key]}
+                          {cell}
                         </td>
                       );
                     })}

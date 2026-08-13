@@ -12,7 +12,8 @@ const SECTIONS = [
   { id: "project", label: "Stats" },
 ];
 
-// The header and this bar both stick, so a section is "current" once its top passes under them.
+// The header and this bar both stick. --sticky-chrome in global.css is this same number:
+// they name one line, for highlighting here and for anchor landings there.
 const STICKY_OFFSET = 116;
 
 export function SectionNav() {

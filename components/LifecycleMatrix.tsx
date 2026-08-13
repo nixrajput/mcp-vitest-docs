@@ -35,10 +35,10 @@ export function LifecycleMatrix() {
         </h2>
         <div className="card mt-6 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[520px] table-fixed text-left font-mono text-sm">
+            <table className="w-full table-fixed text-left font-mono text-sm sm:min-w-[520px]">
               <thead className="bg-fd-muted/60">
                 <tr className="border-b border-(--line)">
-                  <th scope="col" className="w-[14%] px-4 py-3 font-medium text-(--muted)">
+                  <th scope="col" className="w-1/4 px-4 py-3 font-medium text-(--muted) sm:w-[14%]">
                     Lane
                   </th>
                   <th scope="col" className="w-[43%] px-4 py-3 font-medium text-(--era-old)">
@@ -55,16 +55,19 @@ export function LifecycleMatrix() {
                     key={row.lane}
                     className="hover:bg-fd-muted/40 border-b border-(--line) transition-colors last:border-0"
                   >
-                    <th scope="row" className="px-4 py-3 text-left font-semibold text-(--paper)">
+                    <th
+                      scope="row"
+                      className="px-4 py-3 text-left font-semibold break-words text-(--paper)"
+                    >
                       {row.lane}
                     </th>
                     <td
-                      className={`px-4 py-3 ${isThrows(row.old) ? "text-(--muted) italic" : "text-(--paper)"}`}
+                      className={`px-4 py-3 break-words ${isThrows(row.old) ? "text-(--muted) italic" : "text-(--paper)"}`}
                     >
                       {row.old}
                     </td>
                     <td
-                      className={`px-4 py-3 ${isThrows(row.now) ? "text-(--muted) italic" : "text-(--paper)"}`}
+                      className={`px-4 py-3 break-words ${isThrows(row.now) ? "text-(--muted) italic" : "text-(--paper)"}`}
                     >
                       {row.now}
                     </td>

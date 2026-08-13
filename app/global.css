@@ -23,8 +23,9 @@ html {
 :root {
   --site-width: 100%;
   --site-measure: 56rem;
-  /* The header plus the section bar. SectionNav.tsx measures the same line for highlighting. */
-  --sticky-chrome: 105px;
+  /* The header plus the section bar, plus a little air. STICKY_OFFSET in SectionNav.tsx is the
+     same number: they name one line, and 105 vs 116 left sections 11px below the fold. */
+  --sticky-chrome: 116px;
 }
 
 /* The nav and the content wrapper each declare this locally (the wrapper caps its children with
@@ -219,14 +220,10 @@ html {
 
 /* The header and the section bar both stick, so an anchor jump would land the heading behind
    them. Matches STICKY_OFFSET in SectionNav.tsx, which decides the same line for highlighting. */
-#overview,
-#run,
-#lifecycles,
-#coverage,
-#requirements,
-#compare,
-#project {
-  scroll-margin-top: 7.25rem;
+/* Scoped to the home shell: bare ids would also catch a docs heading whose slug is the same
+   word, turning an ordinary `## Overview` into a full-height grey band mid-article. */
+#nd-home-layout :is(#overview, #run, #lifecycles, #coverage, #requirements, #compare, #project) {
+  scroll-margin-top: var(--sticky-chrome);
   /* svh, not vh: on mobile vh is the chrome-hidden viewport, so a section sized that way
      overflows once the chrome appears, and dvh reflows mid-scroll as it hides and shows.
      Minus the two sticky bars, or every section would hide that much of itself. */
@@ -234,12 +231,13 @@ html {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* A wide table inside its own scroller still painted past the viewport once every section had
+     revealed, which let the whole page slide sideways. clip, so overflow-y stays visible. */
+  overflow-x: clip;
 }
 
 /* Alternating bands, so a section boundary is visible without a rule between them. */
-#run,
-#coverage,
-#compare {
+#nd-home-layout :is(#run, #coverage, #compare) {
   background-color: var(--color-fd-muted);
 }
 

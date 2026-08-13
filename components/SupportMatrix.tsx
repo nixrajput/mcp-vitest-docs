@@ -19,7 +19,7 @@ export function SupportMatrix() {
         <h2 className="mt-2 text-2xl font-bold tracking-tight">What your project needs</h2>
         <div className="card mt-6 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[420px] table-fixed text-left font-mono text-sm">
+            <table className="w-full table-fixed text-left font-mono text-sm sm:min-w-[420px]">
               <thead className="bg-fd-muted/60">
                 <tr className="border-b border-(--line)">
                   <th scope="col" className="w-2/5 px-4 py-3 font-medium text-(--muted)">
@@ -36,7 +36,12 @@ export function SupportMatrix() {
                     key={r.label}
                     className="hover:bg-fd-muted/40 border-b border-(--line) transition-colors last:border-0"
                   >
-                    <th scope="row" className="px-4 py-3 text-left font-semibold text-(--paper)">
+                    {/* The package names are single unbreakable tokens wider than this fixed
+                        column, so without this they printed over the value beside them. */}
+                    <th
+                      scope="row"
+                      className="px-4 py-3 text-left font-semibold break-words text-(--paper)"
+                    >
                       {r.label}
                     </th>
                     <td className="px-4 py-3 text-(--paper)">{r.value}</td>
