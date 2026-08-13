@@ -104,3 +104,20 @@ for (const path of ["/icon.svg", "/apple-icon", "/sitemap.xml", "/robots.txt", "
   }
 }
 console.log("PASS: non-localized routes serve without a locale redirect");
+
+// Vercel serves the analytics script only in production, so a local 404 is expected
+// and only the redirect can be checked here.
+{
+  const path = "/_vercel/insights/script.js";
+  const r = await fetch(`${base}${path}`, { redirect: "manual" });
+  const location = r.headers.get("location") ?? "";
+  if (location.includes("/_vercel")) {
+    console.error(
+      `FAIL: ${path} redirected to ${location}. Vercel's edge serves this path, so a ` +
+        "locale prefix 404s it and Web Analytics collects nothing. Keep /_vercel in " +
+        "NON_LOCALIZED_ROUTES in proxy.ts.",
+    );
+    process.exit(1);
+  }
+}
+console.log("PASS: analytics script not locale-redirected");
