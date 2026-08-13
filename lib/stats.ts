@@ -20,9 +20,16 @@ export interface ProjectStats {
   contributors?: Contributor[];
 }
 
+// The route is server-rendered, so a hung upstream would hold the response open rather than
+// merely lose a number. A missed deadline degrades to an omitted stat like any other failure.
+const REQUEST_TIMEOUT_MS = 4000;
+
 async function fetchJson(url: string): Promise<unknown> {
   try {
-    const res = await fetch(url, { next: { revalidate: REVALIDATE_SECONDS } });
+    const res = await fetch(url, {
+      next: { revalidate: REVALIDATE_SECONDS },
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
     return res.ok ? await res.json() : undefined;
   } catch {
     return undefined;

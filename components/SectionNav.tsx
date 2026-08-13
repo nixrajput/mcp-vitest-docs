@@ -3,36 +3,53 @@
 import { useEffect, useState } from "react";
 
 const SECTIONS = [
-  { id: "run", label: "The run" },
+  { id: "run", label: "Test run" },
   { id: "lifecycles", label: "Lifecycles" },
   { id: "coverage", label: "Coverage" },
   { id: "requirements", label: "Requirements" },
   { id: "compare", label: "Compare" },
-  { id: "project", label: "Project" },
+  { id: "project", label: "Stats" },
 ];
 
+// The header and this bar both stick, so a section is "current" once its top passes under them.
+const STICKY_OFFSET = 116;
+
 export function SectionNav() {
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState(SECTIONS[0].id);
 
   useEffect(() => {
-    const targets = SECTIONS.map((s) => document.getElementById(s.id)).filter(
-      (el): el is HTMLElement => el !== null,
+    const found = SECTIONS.map((s) => [s.id, document.getElementById(s.id)] as const).filter(
+      (entry): entry is [string, HTMLElement] => entry[1] !== null,
     );
-    if (targets.length === 0) return;
+    if (found.length === 0) return;
 
-    // The band sits under both sticky bars, so whatever crosses it is what the reader is on.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const first = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (first) setActive(first.target.id);
-      },
-      { rootMargin: "-25% 0px -65% 0px" },
-    );
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      // Last section whose top has passed the sticky line, so exactly one is always current -
+      // an intersection band leaves nothing selected whenever no section is inside it.
+      let current = found[0][0];
+      for (const [id, el] of found) {
+        if (el.getBoundingClientRect().top <= STICKY_OFFSET) current = id;
+      }
+      // The final section can be too short to reach the line, so it would never light up.
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        current = found[found.length - 1][0];
+      }
+      setActive(current);
+    };
 
-    for (const target of targets) observer.observe(target);
-    return () => observer.disconnect();
+    const onScroll = () => {
+      frame ||= requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (

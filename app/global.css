@@ -209,6 +209,17 @@ html > body[data-scroll-locked] {
   background-color: var(--color-fd-primary);
 }
 
+/* The header and the section bar both stick, so an anchor jump would land the heading behind
+   them. Matches STICKY_OFFSET in SectionNav.tsx, which decides the same line for highlighting. */
+#run,
+#lifecycles,
+#coverage,
+#requirements,
+#compare,
+#project {
+  scroll-margin-top: 7.25rem;
+}
+
 /* Utility-driven motion (the row hover, the card lift) is covered here in one place rather than rule
    by rule; the keyframe animations above are already gated on no-preference. */
 @media (prefers-reduced-motion: reduce) {
