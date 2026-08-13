@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
-import { Mark } from "@/components/Mark";
+import { NavTitle } from "@/components/NavTitle";
 import { appName, NPM_URL, REPO_URL } from "./shared";
 
 function NpmIcon() {
@@ -13,12 +13,7 @@ function NpmIcon() {
 export function baseOptions(lang: string): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <span className="inline-flex items-center gap-2">
-          <Mark />
-          {appName}
-        </span>
-      ),
+      title: NavTitle,
       url: `/${lang}`,
     },
     // The package repo, not this site's. The footer already sends people there, and someone

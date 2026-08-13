@@ -2,18 +2,35 @@
 
 import { useEffect, useState } from "react";
 
-// Real output from test/completions.test.ts: same three assertions on both
-// lanes, but v2's timings are genuinely larger than v1's - not symmetric.
+// Real output from the four suites that run on both lanes, captured with
+// `vitest run --reporter=verbose`. The same assertions each side, but v2's timings are
+// genuinely larger than v1's rather than mirrored, so the two panes never line up.
 const CHECKS = {
   old: [
-    { label: "completes a prompt argument by prefix", ms: 15 },
-    { label: "a non-matching prefix completes to nothing", ms: 2 },
+    { label: "completes a prompt argument by prefix", ms: 18 },
+    { label: "a non-matching prefix completes to nothing", ms: 1 },
     { label: "completes a resource-template variable", ms: 1 },
+    { label: "toolManifest is stable and sorted", ms: 20 },
+    { label: "capabilitiesManifest lists names only", ms: 4 },
+    { label: "readResource returns contents", ms: 1 },
+    { label: "listResources and listPrompts include fixtures", ms: 2 },
+    { label: "getPrompt renders arguments", ms: 1 },
+    { label: "onProgress receives updates", ms: 246 },
+    { label: "signal cancels a slow call", ms: 54 },
+    { label: "timeoutMs rejects a slow call", ms: 104 },
   ],
   now: [
-    { label: "completes a prompt argument by prefix", ms: 55 },
-    { label: "a non-matching prefix completes to nothing", ms: 4 },
+    { label: "completes a prompt argument by prefix", ms: 52 },
+    { label: "a non-matching prefix completes to nothing", ms: 9 },
     { label: "completes a resource-template variable", ms: 3 },
+    { label: "toolManifest is stable and sorted", ms: 59 },
+    { label: "capabilitiesManifest lists names only", ms: 5 },
+    { label: "readResource returns contents", ms: 3 },
+    { label: "listResources and listPrompts include fixtures", ms: 4 },
+    { label: "getPrompt renders arguments", ms: 2 },
+    { label: "onProgress receives updates", ms: 310 },
+    { label: "signal cancels a slow call", ms: 55 },
+    { label: "timeoutMs rejects a slow call", ms: 106 },
   ],
 } as const;
 

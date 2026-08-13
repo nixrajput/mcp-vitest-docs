@@ -14,9 +14,17 @@ html > body[data-scroll-locked] {
 /* Full-bleed shell, bounded text - the shape ui.shadcn.com uses (its sections span the viewport,
    its h1 stops at 896px). The nav reads --site-width too, so the two cannot drift apart again:
    the sections were 768px under a 1400px nav. */
+/* Anchor jumps glide between full-height sections instead of cutting. The reduced-motion
+   block below turns this off again. */
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --site-width: 100%;
   --site-measure: 56rem;
+  /* The header plus the section bar. SectionNav.tsx measures the same line for highlighting. */
+  --sticky-chrome: 105px;
 }
 
 /* The nav and the content wrapper each declare this locally (the wrapper caps its children with
@@ -219,11 +227,29 @@ html > body[data-scroll-locked] {
 #compare,
 #project {
   scroll-margin-top: 7.25rem;
+  /* svh, not vh: on mobile vh is the chrome-hidden viewport, so a section sized that way
+     overflows once the chrome appears, and dvh reflows mid-scroll as it hides and shows.
+     Minus the two sticky bars, or every section would hide that much of itself. */
+  min-height: calc(100svh - var(--sticky-chrome));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Alternating bands, so a section boundary is visible without a rule between them. */
+#run,
+#coverage,
+#compare {
+  background-color: var(--color-fd-muted);
 }
 
 /* Utility-driven motion (the row hover, the card lift) is covered here in one place rather than rule
    by rule; the keyframe animations above are already gated on no-preference. */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {
