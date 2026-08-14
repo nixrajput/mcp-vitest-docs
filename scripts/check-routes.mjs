@@ -50,7 +50,7 @@ for (const sheet of sheets) {
 }
 console.log(`PASS: ${sheets.length} stylesheet(s) serve with content`);
 
-for (const path of ["/en/docs", "/en/docs/getting-started"]) {
+for (const path of ["/en/docs", "/en/docs/getting-started", "/en/docs/api"]) {
   const r = await fetch(`${base}${path}`);
   if (!r.ok) {
     console.error(`FAIL: ${path} returned ${r.status}`);

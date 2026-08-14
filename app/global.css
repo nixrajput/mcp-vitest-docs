@@ -140,6 +140,10 @@ html {
   border-radius: 0.875rem;
   background-color: var(--color-fd-card);
   box-shadow: 0 0 0 1px var(--line);
+  /* A grid or flex item cannot shrink below its content by default, so a card holding a long
+     monospace line grows past a phone viewport and the section clips it - the overflow-x on the
+     inner scroller never engages because the card has already stretched. */
+  min-width: 0;
 }
 
 /* Cards stretched to ~460px each at 1920 because the grid inherited the full-bleed section width.
@@ -196,19 +200,21 @@ html {
 }
 
 /* Fumadocs gives nav links a colour change and nothing else, which reads as flat beside the icon
-   buttons next to them. The :not([aria-label]) excludes those icon buttons, which share data-active. */
-#nd-nav a[data-active]:not([aria-label]) {
+   buttons next to them. The :not([aria-label]) excludes those icon buttons, which share data-active.
+   Both headers: the notebook docs layout renders #nd-subnav, not the home #nd-nav, so scoping this
+   to one id left every docs and API page with no marker at all. */
+:is(#nd-nav, #nd-subnav) a[data-active]:not([aria-label]) {
   position: relative;
   padding: 0.375rem 0.625rem;
   margin-inline: 0.0625rem;
   border-radius: 0.5rem;
 }
 
-#nd-nav a[data-active]:not([aria-label]):hover {
+:is(#nd-nav, #nd-subnav) a[data-active]:not([aria-label]):hover {
   background-color: var(--color-fd-accent);
 }
 
-#nd-nav a[data-active="true"]:not([aria-label])::after {
+:is(#nd-nav, #nd-subnav) a[data-active="true"]:not([aria-label])::after {
   content: "";
   position: absolute;
   inset-inline: 0.625rem;
@@ -216,6 +222,14 @@ html {
   height: 2px;
   border-radius: 1px;
   background-color: var(--color-fd-primary);
+}
+
+/* One nav item nests inside another - /docs/api is under /docs - so nested-url marks both active
+   and two links underline at once. Only the deepest keeps the marker, which works because
+   layout.shared.tsx lists a parent before its child. */
+:is(#nd-nav, #nd-subnav)
+  a[data-active="true"]:not([aria-label]):has(~ a[data-active="true"]:not([aria-label]))::after {
+  display: none;
 }
 
 /* The header and the section bar both stick, so an anchor jump would land the heading behind
