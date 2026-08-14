@@ -120,17 +120,24 @@ export function Comparison() {
               <dl className="mt-3 grid gap-2 text-sm">
                 {COLUMNS.map((c) => {
                   const leads = row.leads?.includes(c.key) ?? false;
+                  // Label over value on the narrowest phones: a 9rem label column leaves 132px for
+                  // the value, which broke identifiers like toMatchOutputSchema mid-word. Paired
+                  // with minmax(0,1fr), since a plain 1fr track cannot shrink below its own
+                  // min-content and held the row 62px wider than the card at 320px.
                   return (
-                    <div key={c.key} className="grid grid-cols-[9rem_1fr] gap-3">
+                    <div
+                      key={c.key}
+                      className="grid grid-cols-1 gap-x-3 gap-y-1 sm:grid-cols-[9rem_minmax(0,1fr)]"
+                    >
                       <dt className="text-(--muted)">{c.label}</dt>
                       <dd
-                        className={
+                        className={`break-words ${
                           leads
                             ? "text-fd-foreground font-medium"
                             : isAbsent(row.cells[c.key])
                               ? "text-(--muted)"
                               : "text-fd-muted-foreground"
-                        }
+                        }`}
                       >
                         {leads && (
                           <span

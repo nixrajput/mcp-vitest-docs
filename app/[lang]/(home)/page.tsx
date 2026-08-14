@@ -8,6 +8,7 @@ import { Comparison } from "@/components/Comparison";
 import { ProjectStats } from "@/components/ProjectStats";
 import { InstallCommand } from "@/components/InstallCommand";
 import { Reveal } from "@/components/Reveal";
+import { SectionNav } from "@/components/SectionNav";
 
 // Stats fetches revalidate every 10 minutes (see lib/stats.ts); pinning the route to the
 // same window stops static generation from freezing them at build time regardless.
@@ -19,6 +20,8 @@ export default async function HomePage(props: PageProps<"/[lang]">) {
 
   return (
     <main>
+      {/* This page's own sections, so the bar belongs to it rather than to the shared layout. */}
+      <SectionNav />
       <Hero lang={lang} version={version} />
       <Reveal>
         <ReporterDemo />
