@@ -145,6 +145,7 @@ export function Comparison() {
                             className="mr-1.5 inline-block size-1.5 rounded-full bg-(--era-now) align-middle"
                           />
                         )}
+                        {leads && <span className="sr-only">Leads: </span>}
                         {row.cells[c.key]}
                       </dd>
                     </div>
