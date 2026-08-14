@@ -1,6 +1,12 @@
 import { ReporterPane } from "./ReporterPane";
+import { getSuiteTests } from "@/lib/stats";
 
-export function ReporterDemo() {
+export async function ReporterDemo() {
+  // The suite size belongs to the section about the suite rather than the row of shared
+  // numbers, which is identical on both docs sites. Read from the package README's claim row,
+  // so a release moves it here too; omitted rather than guessed if that fetch fails.
+  const suiteTests = await getSuiteTests();
+
   return (
     <section id="run" className="w-full px-4 py-16 sm:py-20">
       <div className="mx-auto w-full max-w-(--content-width)">
@@ -14,7 +20,13 @@ export function ReporterDemo() {
         </p>
 
         <p className="text-fd-muted-foreground mt-6 pl-1 font-mono text-xs">
-          test/*.test.ts - every suite that runs on both lanes
+          test/*.test.ts -{" "}
+          {suiteTests !== undefined && (
+            <>
+              <span className="text-(--era-now)">{suiteTests} tests</span>,{" "}
+            </>
+          )}
+          every suite that runs on both lanes
         </p>
         <div className="mt-2 grid gap-3 sm:grid-cols-2 sm:grid-rows-[auto_1fr_auto]">
           <ReporterPane era="old" sdkLabel="SDK v1" revision="2025-11-25" startDelay={500} />

@@ -18,8 +18,11 @@ export async function ProjectStats() {
       value: `${(stats.gzipBytes / 1024).toFixed(2)} kB`,
     });
   }
-  if (stats.suiteTests) {
-    cells.push({ label: "tests in the suite", value: String(stats.suiteTests) });
+  if (stats.unpackedBytes) {
+    cells.push({
+      label: "unpacked size",
+      value: `${Math.round(stats.unpackedBytes / 1024).toLocaleString()} kB`,
+    });
   }
   if (stats.stars) {
     cells.push({
