@@ -1,5 +1,4 @@
 const REPO = "nixrajput/mcp-vitest";
-const FIRST_PUBLISH = "2026-08-06";
 
 // Short window, not version.ts's hourly one: GitHub's unauthenticated API caps at 60
 // requests/hour/IP, so every fetch here must be cached, but visitors still want numbers
@@ -15,7 +14,7 @@ export interface Contributor {
 
 export interface ProjectStats {
   suiteTests?: number;
-  totalDownloads?: number;
+  monthlyDownloads?: number;
   stars?: number;
   forks?: number;
   contributors?: Contributor[];
@@ -56,28 +55,6 @@ async function fetchJson(url: string): Promise<unknown> {
   }
 }
 
-const iso = (date: Date) => date.toISOString().slice(0, 10);
-
-/**
- * npm's /downloads/range answers at most 18 months per query and silently drops anything
- * older, so a single first-publish-to-today range would quietly stop being all-time in
- * February 2028. Windows of 540 days stay inside that cap: one request until then, two after.
- */
-function downloadWindows(from: string, to: string): [string, string][] {
-  const WINDOW_DAYS = 540;
-  const end = new Date(`${to}T00:00:00Z`);
-  const windows: [string, string][] = [];
-  for (let start = new Date(`${from}T00:00:00Z`); start <= end;) {
-    const stop = new Date(start);
-    stop.setUTCDate(stop.getUTCDate() + WINDOW_DAYS - 1);
-    const last = stop < end ? stop : end;
-    windows.push([iso(start), iso(last)]);
-    start = new Date(last);
-    start.setUTCDate(start.getUTCDate() + 1);
-  }
-  return windows;
-}
-
 /**
  * All the live project stats the home page shows, in one call. Each source can fail
  * independently (rate limit, network) - on failure that stat is omitted rather than
@@ -85,13 +62,12 @@ function downloadWindows(from: string, to: string): [string, string][] {
  * truth is just "npm didn't answer".
  */
 export async function getProjectStats(): Promise<ProjectStats> {
-  const windows = downloadWindows(FIRST_PUBLISH, iso(new Date()));
   const [downloads, repo, contributors, suiteTests] = await Promise.all([
-    Promise.all(
-      windows.map(([from, to]) =>
-        fetchJson(`https://api.npmjs.org/downloads/range/${from}:${to}/mcp-vitest`),
-      ),
-    ),
+    // A rolling 30-day point query rather than a range from first publish: a rate stays
+    // meaningful as the package ages, where a lifetime total only ever grows, and a point
+    // query cannot run into the 18-month cap that silently truncates a long range. npm's
+    // window closes a few days back - that lag is theirs, and the label says "a month".
+    fetchJson("https://api.npmjs.org/downloads/point/last-month/mcp-vitest"),
     fetchJson(`https://api.github.com/repos/${REPO}`),
     fetchJson(`https://api.github.com/repos/${REPO}/contributors`),
     fetchSuiteTests(),
@@ -100,19 +76,8 @@ export async function getProjectStats(): Promise<ProjectStats> {
   const stats: ProjectStats = {};
   if (suiteTests !== undefined) stats.suiteTests = suiteTests;
 
-  // Every window has to answer: a partial sum under an all-time label undercounts, which is
-  // the same lie as a zero.
-  let total = 0;
-  let complete = true;
-  for (const window of downloads) {
-    const days = (window as { downloads?: { downloads: number }[] } | undefined)?.downloads;
-    if (!Array.isArray(days)) {
-      complete = false;
-      break;
-    }
-    for (const day of days) total += day.downloads ?? 0;
-  }
-  if (complete) stats.totalDownloads = total;
+  const monthly = (downloads as { downloads?: unknown } | undefined)?.downloads;
+  if (typeof monthly === "number") stats.monthlyDownloads = monthly;
 
   const repoData = repo as { stargazers_count?: unknown; forks_count?: unknown } | undefined;
   if (typeof repoData?.stargazers_count === "number") stats.stars = repoData.stargazers_count;
