@@ -69,7 +69,10 @@ export async function getProjectStats(): Promise<ProjectStats> {
     // window closes a few days back - that lag is theirs, and the label says "a month".
     fetchJson("https://api.npmjs.org/downloads/point/last-month/mcp-vitest"),
     fetchJson(`https://api.github.com/repos/${REPO}`),
-    fetchJson(`https://api.github.com/repos/${REPO}/contributors`),
+    // per_page=100, since the card prints this length as the contributor count and the
+    // endpoint pages at 30 by default. One request covers any plausible size for this repo;
+    // past 100 it would need real pagination, which is a happier problem than it sounds.
+    fetchJson(`https://api.github.com/repos/${REPO}/contributors?per_page=100`),
     fetchSuiteTests(),
   ]);
 
